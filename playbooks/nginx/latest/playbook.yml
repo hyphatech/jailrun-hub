@@ -3,11 +3,11 @@
   gather_facts: false
 
   vars:
-    nginx_listen_port: 80
-    nginx_server_name: "_"
-    nginx_root: "/usr/local/www/nginx"
-    nginx_access_log: "/var/log/nginx/access.log"
-    nginx_error_log: "/var/log/nginx/error.log"
+    NGINX_LISTEN_PORT: 80
+    NGINX_SERVER_NAME: "_"
+    NGINX_ROOT: "/usr/local/www/nginx"
+    NGINX_ACCESS_LOG: "/var/log/nginx/access.log"
+    NGINX_ERROR_LOG: "/var/log/nginx/error.log"
 
   tasks:
     - name: Install nginx
@@ -18,7 +18,7 @@
 
     - name: Create web root
       ansible.builtin.file:
-        path: /usr/local/www/nginx
+        path: "{{ NGINX_ROOT }}"
         state: directory
         mode: "0755"
 
@@ -37,11 +37,8 @@
     - name: Install default index page from template
       ansible.builtin.template:
         src: index.html.j2
-        dest: /usr/local/www/nginx/index.html
+        dest: "{{ NGINX_ROOT }}/index.html"
         mode: "0644"
-      vars:
-        index_title: "nginx (jrun)"
-        index_heading: "nginx is jrunning"
 
     - name: Test nginx config
       ansible.builtin.command: nginx -t

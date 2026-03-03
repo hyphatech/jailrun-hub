@@ -7,15 +7,13 @@ set -euo pipefail
 #   <sha256>  <relative-path>
 #
 # Usage:
-#   ./tools/gen-manifest.sh playbooks/python/3.14
-#   ./tools/gen-manifest.sh .   # from inside a playbook dir
+#   ./tools/gen-manifest.sh playbooks/nginx/latest
 
 readonly MANIFEST_NAME="jrun.manifest"
 readonly PLAYBOOK_NAME="playbook.yml"
 
 die() { printf 'error: %s\n' "$*" >&2; exit 1; }
 
-# ---------- resolve sha256 tool once, not per-file ----------
 if command -v sha256sum >/dev/null 2>&1; then
   sha256_cmd() { sha256sum -- "$1" | cut -d' ' -f1; }
 elif command -v shasum >/dev/null 2>&1; then
@@ -24,13 +22,11 @@ else
   die "need 'sha256sum' (Linux) or 'shasum' (macOS)"
 fi
 
-# ---------- validate input ----------
 (( $# == 1 )) || die "usage: $0 <playbook-directory>"
 DIR="${1%/}"  # strip trailing slash
 [[ -d "$DIR" ]]                  || die "not a directory: $DIR"
 [[ -f "$DIR/$PLAYBOOK_NAME" ]]   || die "missing $PLAYBOOK_NAME in $DIR"
 
-# ---------- generate manifest ----------
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
 

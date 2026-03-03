@@ -1,6 +1,11 @@
 - name: Redis
   hosts: localhost
   gather_facts: false
+
+  vars:
+    REDIS_BIND_ADDRESS: "0.0.0.0"
+    REDIS_PROTECTED_MODE: "no"
+
   tasks:
     - name: Install Redis
       ansible.builtin.command: pkg install -y redis
@@ -8,17 +13,17 @@
     - name: Enable Redis
       ansible.builtin.command: sysrc redis_enable=YES
 
-    - name: Bind to all interfaces
+    - name: Bind address
       ansible.builtin.lineinfile:
         path: /usr/local/etc/redis.conf
         regexp: "^bind"
-        line: "bind 0.0.0.0"
+        line: "bind {{ REDIS_BIND_ADDRESS }}"
 
-    - name: Disable protected mode
+    - name: Set protected mode
       ansible.builtin.lineinfile:
         path: /usr/local/etc/redis.conf
         regexp: "^protected-mode"
-        line: "protected-mode no"
+        line: "protected-mode {{ REDIS_PROTECTED_MODE }}"
 
     - name: Start Redis
       ansible.builtin.command: service redis start

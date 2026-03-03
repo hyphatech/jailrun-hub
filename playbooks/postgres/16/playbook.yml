@@ -1,6 +1,12 @@
 - name: PostgreSQL 16
   hosts: localhost
   gather_facts: false
+
+  vars:
+    POSTGRES_LISTEN_ADDRESSES: "*"
+    POSTGRES_HBA_RULE: "host all all all trust"
+    POSTGRES_DB: "testdb"
+
   tasks:
     - name: Install PostgreSQL
       ansible.builtin.command: pkg install -y postgresql16-server
@@ -17,12 +23,12 @@
       ansible.builtin.lineinfile:
         path: /var/db/postgres/data16/postgresql.conf
         regexp: "^#?listen_addresses"
-        line: "listen_addresses = '*'"
+        line: "listen_addresses = '{{ POSTGRES_LISTEN_ADDRESSES }}'"
 
-    - name: Allow all connections
+    - name: Allow connections
       ansible.builtin.lineinfile:
         path: /var/db/postgres/data16/pg_hba.conf
-        line: "host all all all trust"
+        line: "{{ POSTGRES_HBA_RULE }}"
 
     - name: Check if PostgreSQL is running
       ansible.builtin.command: service postgresql status
@@ -39,8 +45,9 @@
       when: pg_status.rc == 0
 
     - name: Create test database
-      ansible.builtin.command: su -m postgres -c 'psql -c "CREATE DATABASE testdb"'
+      ansible.builtin.command: su -m postgres -c 'psql -c "CREATE DATABASE {{ POSTGRES_DB }}"'
       register: createdb
       failed_when: >
         createdb.rc != 0 and
         'already exists' not in (createdb.stderr | default(''))
+      when: POSTGRES_DB | length > 0
