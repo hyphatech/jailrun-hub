@@ -12,14 +12,14 @@ http {
   sendfile           on;
   keepalive_timeout  65;
 
-  access_log         {{ nginx_access_log }};
-  error_log          {{ nginx_error_log }};
+  access_log         {{ NGINX_ACCESS_LOG }};
+  error_log          {{ NGINX_ERROR_LOG }};
 
   server {
-    listen           {{ nginx_listen_port }};
-    server_name      {{ nginx_server_name }};
+    listen           {{ NGINX_LISTEN_PORT }};
+    server_name      {{ NGINX_SERVER_NAME }};
 
-    root             {{ nginx_root }};
+    root             {{ NGINX_ROOT }};
     index            index.html;
 
     location / {
