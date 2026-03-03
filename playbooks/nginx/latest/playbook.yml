@@ -1,0 +1,56 @@
+- name: Nginx
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    nginx_listen_port: 80
+    nginx_server_name: "_"
+    nginx_root: "/usr/local/www/nginx"
+    nginx_access_log: "/var/log/nginx/access.log"
+    nginx_error_log: "/var/log/nginx/error.log"
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.command: pkg install -y nginx
+
+    - name: Enable nginx
+      ansible.builtin.command: sysrc nginx_enable=YES
+
+    - name: Create web root
+      ansible.builtin.file:
+        path: /usr/local/www/nginx
+        state: directory
+        mode: "0755"
+
+    - name: Ensure log directory exists
+      ansible.builtin.file:
+        path: /var/log/nginx
+        state: directory
+        mode: "0755"
+
+    - name: Install nginx.conf from template
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: /usr/local/etc/nginx/nginx.conf
+        mode: "0644"
+
+    - name: Install default index page from template
+      ansible.builtin.template:
+        src: index.html.j2
+        dest: /usr/local/www/nginx/index.html
+        mode: "0644"
+      vars:
+        index_title: "nginx (jrun)"
+        index_heading: "nginx is jrunning"
+
+    - name: Test nginx config
+      ansible.builtin.command: nginx -t
+      register: nginx_test
+      changed_when: false
+
+    - name: Start nginx
+      ansible.builtin.command: service nginx start
+      register: nginx_start
+      failed_when: >
+        nginx_start.rc != 0 and
+        'already running' not in (nginx_start.stderr | default(''))
