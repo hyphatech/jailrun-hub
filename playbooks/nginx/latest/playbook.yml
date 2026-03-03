@@ -33,21 +33,27 @@
         src: nginx.conf.j2
         dest: /usr/local/etc/nginx/nginx.conf
         mode: "0644"
+      notify: reload nginx
 
     - name: Install default index page from template
       ansible.builtin.template:
         src: index.html.j2
         dest: "{{ NGINX_ROOT }}/index.html"
         mode: "0644"
+      notify: reload nginx
 
     - name: Test nginx config
       ansible.builtin.command: nginx -t
       register: nginx_test
       changed_when: false
 
-    - name: Start nginx
+    - name: Ensure nginx is running
       ansible.builtin.command: service nginx start
       register: nginx_start
       failed_when: >
         nginx_start.rc != 0 and
         'already running' not in (nginx_start.stderr | default(''))
+
+  handlers:
+    - name: reload nginx
+      ansible.builtin.command: service nginx reload
