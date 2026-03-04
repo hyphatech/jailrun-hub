@@ -1,3 +1,4 @@
+93acdac2c86d1d75bce8b35a7cdc31fd855337655fedbe1e6d6580fb88a97c3f  README.md
 86d9a9b6aefa835e52c2a0632091aae20347ee6066d786a31378ed8a559efbbc  playbook.yml
 fe56066398f5dc99ad1fdda36bcadeb268f92df8c904a08c9e228801692fec75  templates/index.html.j2
 bf807ab10c569d2cba7eb7957f847fa5619dbc6da709e587f7092bfdad5338f4  templates/nginx.conf.j2

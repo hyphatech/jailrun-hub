@@ -1,0 +1,160 @@
+- name: FFmpeg 7
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    FFMPEG_VERSION: "7.1.3"
+    FFMPEG_PREFIX: "/usr/local/ffmpeg7"
+
+  tasks:
+    - name: Check ffmpeg presence
+      ansible.builtin.stat:
+        path: "{{ FFMPEG_PREFIX }}/bin/ffmpeg"
+      register: ffmpeg_bin
+
+    - name: Install ffmpeg build dependencies
+      ansible.builtin.command: pkg install -y {{ item }}
+      loop:
+        - nasm
+        - yasm
+        - pkgconf
+        - gmake
+        - libass
+        - freetype2
+        - fontconfig
+        - harfbuzz
+        - libvorbis
+        - opus
+        - lame
+        - libvpx
+        - x264
+        - x265
+        - aom
+        - dav1d
+        - svt-av1
+        - libjxl
+        - webp
+        - gnutls
+        - gmp
+        - libdrm
+        - libva
+        - libvdpau
+        - frei0r
+        - libbluray
+        - libxml2
+        - librsvg2
+        - lcms2
+        - srt
+        - sekrit-twc-zimg
+        - libdvdnav
+        - libdvdread
+        - libxcb
+      register: ffmpeg_pkg
+      changed_when: "'installed' in (ffmpeg_pkg.stdout | default('')) or 'reinstalled' in (ffmpeg_pkg.stdout | default(''))"
+      failed_when: ffmpeg_pkg.rc != 0
+      when: not ffmpeg_bin.stat.exists
+
+    - name: Download ffmpeg source
+      ansible.builtin.command: >
+        fetch -o /tmp/ffmpeg-{{ FFMPEG_VERSION }}.tar.xz
+        https://ffmpeg.org/releases/ffmpeg-{{ FFMPEG_VERSION }}.tar.xz
+      args:
+        creates: "/tmp/ffmpeg-{{ FFMPEG_VERSION }}.tar.xz"
+      when: not ffmpeg_bin.stat.exists
+
+    - name: Extract ffmpeg source
+      ansible.builtin.command: >
+        tar xf /tmp/ffmpeg-{{ FFMPEG_VERSION }}.tar.xz -C /tmp
+      args:
+        creates: "/tmp/ffmpeg-{{ FFMPEG_VERSION }}/configure"
+      when: not ffmpeg_bin.stat.exists
+
+    - name: Configure ffmpeg
+      ansible.builtin.command: >
+        /bin/sh -c '
+        cd /tmp/ffmpeg-{{ FFMPEG_VERSION }} &&
+        export CFLAGS="-I/usr/local/include" &&
+        export LDFLAGS="-L/usr/local/lib" &&
+        export PKG_CONFIG_PATH="/usr/local/libdata/pkgconfig:/usr/local/lib/pkgconfig" &&
+        ./configure
+        --prefix={{ FFMPEG_PREFIX }}
+        --cc=cc
+        --cxx=c++
+        --enable-shared
+        --enable-pic
+        --enable-gpl
+        --enable-version3
+        --enable-optimizations
+        --enable-runtime-cpudetect
+        --extra-ldflags="-Wl,-rpath,{{ FFMPEG_PREFIX }}/lib"
+        --disable-static
+        --disable-debug
+        --enable-libzimg
+        --enable-libaom
+        --enable-libass
+        --enable-libdav1d
+        --enable-libdrm
+        --enable-libdvdnav
+        --enable-libdvdread
+        --enable-libfreetype
+        --enable-libfontconfig
+        --enable-libharfbuzz
+        --enable-libmp3lame
+        --enable-libopus
+        --enable-libvorbis
+        --enable-libvpx
+        --enable-libx264
+        --enable-libx265
+        --enable-libwebp
+        --enable-libjxl
+        --enable-libsvtav1
+        --enable-libsrt
+        --enable-libbluray
+        --enable-libxml2
+        --enable-librsvg
+        --enable-lcms2
+        --enable-frei0r
+        --enable-iconv
+        --enable-gnutls
+        --enable-gmp
+        --enable-vaapi
+        --enable-vdpau
+        --enable-libxcb
+        --enable-libxcb-shm
+        --enable-libxcb-shape
+        --enable-libxcb-xfixes
+        --enable-network
+        --enable-postproc'
+      args:
+        creates: "/tmp/ffmpeg-{{ FFMPEG_VERSION }}/ffbuild/config.mak"
+      when: not ffmpeg_bin.stat.exists
+
+    - name: Build ffmpeg
+      ansible.builtin.command: >
+        /bin/sh -c '
+        cd /tmp/ffmpeg-{{ FFMPEG_VERSION }} &&
+        MAKE=$(command -v gmake || command -v make) &&
+        $MAKE -j$(sysctl -n hw.ncpu)'
+      args:
+        creates: "/tmp/ffmpeg-{{ FFMPEG_VERSION }}/ffmpeg"
+      when: not ffmpeg_bin.stat.exists
+
+    - name: Install ffmpeg
+      ansible.builtin.command: >
+        /bin/sh -c '
+        cd /tmp/ffmpeg-{{ FFMPEG_VERSION }} &&
+        MAKE=$(command -v gmake || command -v make) &&
+        $MAKE install'
+      when: not ffmpeg_bin.stat.exists
+
+    - name: Symlink ffmpeg into PATH
+      ansible.builtin.command: ln -sf {{ FFMPEG_PREFIX }}/bin/ffmpeg /usr/local/bin/ffmpeg
+
+    - name: Symlink ffprobe into PATH
+      ansible.builtin.command: ln -sf {{ FFMPEG_PREFIX }}/bin/ffprobe /usr/local/bin/ffprobe
+
+    - name: Clean up build files
+      ansible.builtin.command: >
+        rm -rf /tmp/ffmpeg-{{ FFMPEG_VERSION }} /tmp/ffmpeg-{{ FFMPEG_VERSION }}.tar.xz
+      changed_when: false
+      when: not ffmpeg_bin.stat.exists
