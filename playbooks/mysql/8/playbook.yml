@@ -4,6 +4,7 @@
 
   vars:
     MYSQL_BIND_ADDRESS: "0.0.0.0"
+    MYSQL_LOWER_CASE_TABLE_NAMES: 1
     MYSQL_DB: "testdb"
     MYSQL_TEST_USER: "test"
     MYSQL_TEST_PASSWORD: "test"
@@ -15,17 +16,18 @@
     - name: Enable MySQL
       ansible.builtin.command: sysrc mysql_enable=YES
 
-    - name: Initialize MySQL (first run)
-      ansible.builtin.command: service mysql-server onestart
-      args:
-        creates: /var/db/mysql/mysql
-
     - name: Configure MySQL
       ansible.builtin.copy:
         dest: /usr/local/etc/mysql/my.cnf
         content: |
           [mysqld]
           bind-address = {{ MYSQL_BIND_ADDRESS }}
+          lower_case_table_names = {{ MYSQL_LOWER_CASE_TABLE_NAMES }}
+
+    - name: Initialize MySQL (first run)
+      ansible.builtin.command: service mysql-server onestart
+      args:
+        creates: /var/db/mysql/mysql
 
     - name: Check if MySQL is running
       ansible.builtin.command: service mysql-server status

@@ -16,19 +16,17 @@
     - name: Enable MariaDB
       ansible.builtin.command: sysrc mysql_enable=YES
 
+    - name: Configure MariaDB
+      ansible.builtin.copy:
+        dest: /usr/local/etc/mysql/my.cnf
+        content: |
+          [mysqld]
+          bind-address = {{ MARIADB_BIND_ADDRESS }}
+
     - name: Initialize MariaDB (first run)
       ansible.builtin.command: service mysql-server onestart
       args:
         creates: /var/db/mysql/mysql
-
-    - name: Configure MariaDB to listen on all interfaces
-      ansible.builtin.blockinfile:
-        path: /usr/local/etc/mysql/my.cnf
-        create: true
-        marker: "# {mark} ANSIBLE MARIADB"
-        block: |
-          [mysqld]
-          bind-address = {{ MARIADB_BIND_ADDRESS }}
 
     - name: Check if MariaDB is running
       ansible.builtin.command: service mysql-server status
