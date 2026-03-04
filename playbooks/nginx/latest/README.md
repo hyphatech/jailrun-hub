@@ -23,7 +23,7 @@ jail "hypha-nginx" {
 ## Variables
 
 | Variable            | Description        | Default                     |
-|--------------------|--------------------|-----------------------------|
+|---------------------|--------------------|-----------------------------|
 | `NGINX_LISTEN_PORT` | Nginx listen port  | `80`                        |
 | `NGINX_SERVER_NAME` | `server_name`      | `_`                         |
 | `NGINX_ROOT`        | Document root      | `/usr/local/www/nginx`      |

@@ -20,12 +20,12 @@
       args:
         creates: /var/db/mysql/mysql
 
-    - name: Listen on all interfaces
-      ansible.builtin.lineinfile:
-        path: /usr/local/etc/mysql/my.cnf
-        regexp: "^#?bind-address"
-        line: "bind-address = {{ MYSQL_BIND_ADDRESS }}"
-        create: true
+    - name: Configure MySQL
+      ansible.builtin.copy:
+        dest: /usr/local/etc/mysql/my.cnf
+        content: |
+          [mysqld]
+          bind-address = {{ MYSQL_BIND_ADDRESS }}
 
     - name: Check if MySQL is running
       ansible.builtin.command: service mysql-server status

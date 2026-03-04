@@ -20,7 +20,7 @@ jail "hypha-redis" {
 
 ## Variables
 
-| Variable               | Description              | Default     |
-|-----------------------|--------------------------|-------------|
-| `REDIS_BIND_ADDRESS`   | Value for `bind`         | `0.0.0.0`   |
-| `REDIS_PROTECTED_MODE` | Value for `protected-mode` | `no`      |
+| Variable               | Description                | Default     |
+|------------------------|----------------------------|-------------|
+| `REDIS_BIND_ADDRESS`   | Value for `bind`           | `0.0.0.0`   |
+| `REDIS_PROTECTED_MODE` | Value for `protected-mode` | `no`        |

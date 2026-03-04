@@ -5,7 +5,7 @@ Relational database server.
 ## jrun example
 
 ```ucl
-jail "hypha-postgres" {
+jail "hypha-postgres-16" {
   setup {
     pg {
       type = "ansible";
@@ -20,8 +20,8 @@ jail "hypha-postgres" {
 
 ## Variables
 
-| Variable                   | Description                          | Default                 |
-|---------------------------|--------------------------------------|-------------------------|
-| `POSTGRES_LISTEN_ADDRESSES` | `listen_addresses` in `postgresql.conf` | `*`                     |
-| `POSTGRES_HBA_RULE`         | Line appended to `pg_hba.conf`       | `host all all all trust` |
-| `POSTGRES_DB`               | Database name to create              | `testdb`                |
+| Variable                    | Description                             | Default                  |
+|-----------------------------|-----------------------------------------|--------------------------|
+| `POSTGRES_LISTEN_ADDRESSES` | `listen_addresses` in `postgresql.conf` | `*`                      |
+| `POSTGRES_HBA_RULE`         | Line appended to `pg_hba.conf`          | `host all all all trust` |
+| `POSTGRES_DB`               | Database name to create                 | `testdb`                 |

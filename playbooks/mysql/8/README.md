@@ -5,9 +5,9 @@ Relational database server.
 ## jrun example
 
 ```ucl
-jail "hypha-mysql" {
+jail "hypha-mysql-8" {
   setup {
-    mysql8 {
+    mysql {
       type = "ansible";
       url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/mysql/8/playbook.yml";
     }
@@ -21,7 +21,7 @@ jail "hypha-mysql" {
 ## Variables
 
 | Variable               | Description                           | Default   |
-|-----------------------|---------------------------------------|-----------|
+|------------------------|---------------------------------------|-----------|
 | `MYSQL_BIND_ADDRESS`   | MySQL bind address (`bind-address`)   | `0.0.0.0` |
 | `MYSQL_DB`             | Database to create                    | `testdb`  |
 | `MYSQL_TEST_USER`      | Test user to create (`'%'` host)      | `test`    |
