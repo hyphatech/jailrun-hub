@@ -12,7 +12,6 @@ jail "hypha-redis" {
       url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/redis/latest/playbook.yml";
     }
   }
-
   forward {
     redis { host = 7379; jail = 6379; }
   }

@@ -12,7 +12,6 @@ jail "hypha-postgres" {
       url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/postgres/16/playbook.yml";
     }
   }
-
   forward {
     pg { host = 6432; jail = 5432; }
   }

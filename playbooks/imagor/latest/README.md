@@ -12,11 +12,9 @@ jail "hypha-imagor" {
       url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/imagor/latest/playbook.yml";
     }
   }
-
   forward {
     http { host = 9000; jail = 8000; }
   }
-
   exec {
     imagor {
       cmd = "imagor";

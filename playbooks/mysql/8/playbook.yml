@@ -1,0 +1,56 @@
+- name: MySQL 8
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    MYSQL_BIND_ADDRESS: "0.0.0.0"
+    MYSQL_DB: "testdb"
+    MYSQL_TEST_USER: "test"
+    MYSQL_TEST_PASSWORD: "test"
+
+  tasks:
+    - name: Install MySQL
+      ansible.builtin.command: pkg install -y mysql80-server
+
+    - name: Enable MySQL
+      ansible.builtin.command: sysrc mysql_enable=YES
+
+    - name: Initialize MySQL (first run)
+      ansible.builtin.command: service mysql-server onestart
+      args:
+        creates: /var/db/mysql/mysql
+
+    - name: Listen on all interfaces
+      ansible.builtin.lineinfile:
+        path: /usr/local/etc/mysql/my.cnf
+        regexp: "^#?bind-address"
+        line: "bind-address = {{ MYSQL_BIND_ADDRESS }}"
+        create: true
+
+    - name: Check if MySQL is running
+      ansible.builtin.command: service mysql-server status
+      register: mysql_status
+      failed_when: false
+      changed_when: false
+
+    - name: Start MySQL
+      ansible.builtin.command: service mysql-server start
+      when: mysql_status.rc != 0
+
+    - name: Restart MySQL to apply config
+      ansible.builtin.command: service mysql-server restart
+      when: mysql_status.rc == 0
+
+    - name: Create test user
+      ansible.builtin.command: >
+        mysql -u root -e
+        "CREATE USER IF NOT EXISTS '{{ MYSQL_TEST_USER }}'@'%' IDENTIFIED BY '{{ MYSQL_TEST_PASSWORD }}';"
+
+    - name: Grant privileges to test user
+      ansible.builtin.command: >
+        mysql -u root -e
+        "GRANT ALL PRIVILEGES ON *.* TO '{{ MYSQL_TEST_USER }}'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+
+    - name: Create database
+      ansible.builtin.command: mysql -u root -e "CREATE DATABASE IF NOT EXISTS {{ MYSQL_DB }}"
+      when: MYSQL_DB | length > 0
