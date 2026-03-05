@@ -3,15 +3,16 @@
   gather_facts: false
 
   vars:
+    MYSQL_PACKAGE: "mysql80-server"
     MYSQL_BIND_ADDRESS: "0.0.0.0"
-    MYSQL_LOWER_CASE_TABLE_NAMES: 1
     MYSQL_DB: "testdb"
     MYSQL_TEST_USER: "test"
     MYSQL_TEST_PASSWORD: "test"
+    MYSQL_LOWER_CASE_TABLE_NAMES: 1
 
   tasks:
     - name: Install MySQL
-      ansible.builtin.command: pkg install -y mysql80-server
+      ansible.builtin.command: pkg install -y {{ MYSQL_PACKAGE }}
 
     - name: Enable MySQL
       ansible.builtin.command: sysrc mysql_enable=YES
