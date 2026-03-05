@@ -31,6 +31,7 @@ jail "example" {
 | Playbook | Description |
 | --- | --- |
 | [`xfce`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/xfce/latest) | [XFCE](https://www.xfce.org/) lightweight desktop environment. |
+| [`kde`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/kde/latest) | [Plasma (KDE)](https://kde.org/plasma-desktop/) desktop environment (KDE project). |
 
 ## Layout
 

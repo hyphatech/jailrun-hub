@@ -1,4 +1,4 @@
-- name: FreeBSD desktop (XFCE + LightDM)
+- name: FreeBSD desktop (KDE Plasma + SDDM)
   hosts: localhost
   gather_facts: false
   become: true
@@ -10,26 +10,11 @@
     DESKTOP_PACKAGES:
       - ca_root_nss
       - dbus
-      - ffmpegthumbnailer
-      - file-roller
-      - firefox
-      - gvfs
-      - lightdm
-      - lightdm-gtk-greeter
-      - mousepad
-      - nano
-      - networkmgr
-      - pavucontrol
-      - polkit
-      - pulseaudio
-      - shared-mime-info
-      - thunar-archive-plugin
-      - xdg-utils
-      - xfce
-      - xfce4-goodies
-      - xfce4-terminal
-      - xfce4-tumbler
+      - plasma6-plasma
+      - sddm
       - xorg
+      - falkon
+      - konsole
     X_RESOLUTION: "1024x768"
 
   tasks:
@@ -60,7 +45,7 @@
       ansible.builtin.command: "{{ item }}"
       loop:
         - sysrc dbus_enable=YES
-        - sysrc lightdm_enable=YES
+        - sysrc sddm_enable=YES
         - sysrc moused_enable=YES
       changed_when: false
 
@@ -72,7 +57,7 @@
       loop:
         - dbus
         - moused
-        - lightdm
+        - sddm
 
     - name: Ensure desktop user exists
       ansible.builtin.user:
