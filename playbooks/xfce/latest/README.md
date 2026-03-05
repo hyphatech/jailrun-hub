@@ -20,7 +20,7 @@ base {
 Start the VM in a graphical QEMU session after applying the base config:
 
 ```bash
-jrun start --base examples/base.ucl --mode graphic
+jrun start --base base.ucl --mode graphic
 ```
 
 ## Variables
