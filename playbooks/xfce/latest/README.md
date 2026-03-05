@@ -29,5 +29,5 @@ jrun start --base examples/base.ucl --mode graphic
 |-------------------------|----------------------------------------------------------------|--------------|
 | `DESKTOP_USER`          | Desktop login username                                         | `hypha`      |
 | `DESKTOP_PASSWORD_HASH` | Password hash for `DESKTOP_USER` (FreeBSD `crypt(3)` `$6$...`) | *(required)* |
-| `X_RESOLUTION`          | Max EFI framebuffer resolution (`efi_max_resolution`)          | `1024x768`   |
 | `DESKTOP_PACKAGES`      | Package list installed via `pkg`                               | *(list)*     |
+| `X_RESOLUTION`          | Max EFI framebuffer resolution (`efi_max_resolution`)          | `1024x768`   |

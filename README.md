@@ -14,7 +14,7 @@ jail "example" {
 }
 ```
 
-## Playbooks
+## Jail Playbooks
 
 | Playbook | Description |
 | --- | --- |
@@ -25,6 +25,12 @@ jail "example" {
 | [`nginx`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/nginx/latest) | [Nginx](https://nginx.org/) web server with a basic default config. |
 | [`postgres-16`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/postgres/16) | [PostgreSQL](https://www.postgresql.org/) 16 database server. |
 | [`redis`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/redis/latest) | [Redis](https://github.com/redis/redis) in-memory data store. |
+
+## Base Playbooks
+
+| Playbook | Description |
+| --- | --- |
+| [`xfce`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/xfce/latest) | [XFCE](https://www.xfce.org/) lightweight desktop environment. |
 
 ## Layout
 
