@@ -1,0 +1,94 @@
+- name: FreeBSD desktop (XFCE + LightDM)
+  hosts: localhost
+  gather_facts: false
+  become: true
+  become_method: doas
+
+  vars:
+    DESKTOP_USER: "hypha"
+    DESKTOP_PASSWORD_HASH: "$6$Rxmu00iHFfy.vOlb$gX4kyLiXFoeob/.fA0EesOm1Cg4Dkcd0i/0dZZqIrW0P.Jnki9rGp4brp73zJvrV1mc42sB5IlUiY/LGcBh5r0"
+    X_RESOLUTION: "1024x768"
+    DESKTOP_PACKAGES:
+      - ca_root_nss
+      - dbus
+      - ffmpegthumbnailer
+      - file-roller
+      - firefox
+      - gvfs
+      - lightdm
+      - lightdm-gtk-greeter
+      - mousepad
+      - nano
+      - networkmgr
+      - pavucontrol
+      - polkit
+      - pulseaudio
+      - shared-mime-info
+      - sudo
+      - thunar-archive-plugin
+      - xdg-utils
+      - xfce
+      - xfce4-goodies
+      - xfce4-terminal
+      - xfce4-tumbler
+      - xorg
+
+  tasks:
+    - name: Update pkg metadata
+      ansible.builtin.command: pkg update -f
+      changed_when: false
+
+    - name: Install desktop packages
+      ansible.builtin.package:
+        name: "{{ DESKTOP_PACKAGES }}"
+        state: present
+
+    - name: Set EFI framebuffer max resolution (ramfb/scfb)
+      ansible.builtin.lineinfile:
+        path: /boot/loader.conf
+        create: yes
+        regexp: '^efi_max_resolution='
+        line: 'efi_max_resolution="{{ X_RESOLUTION }}"'
+
+    - name: Ensure VT console is used
+      ansible.builtin.lineinfile:
+        path: /boot/loader.conf
+        create: yes
+        regexp: '^kern\.vty='
+        line: 'kern.vty=vt'
+
+    - name: Enable required services (only ones that actually exist)
+      ansible.builtin.command: "{{ item }}"
+      loop:
+        - sysrc dbus_enable=YES
+        - sysrc lightdm_enable=YES
+        - sysrc moused_enable=YES
+      changed_when: false
+
+    - name: Start services now
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - dbus
+        - moused
+        - lightdm
+
+    - name: Ensure desktop user exists (hypha / hypha)
+      ansible.builtin.user:
+        name: "{{ DESKTOP_USER }}"
+        groups: "wheel,video"
+        append: yes
+        shell: /bin/tcsh
+        create_home: yes
+        password: "{{ DESKTOP_PASSWORD_HASH }}"
+        update_password: on_create
+        state: present
+
+    - name: Allow wheel group to sudo
+      ansible.builtin.lineinfile:
+        path: /usr/local/etc/sudoers
+        regexp: '^%wheel\s+ALL=\(ALL:ALL\)\s+ALL'
+        line: '%wheel ALL=(ALL:ALL) ALL'
+        validate: 'visudo -cf %s'
