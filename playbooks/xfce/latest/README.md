@@ -5,7 +5,7 @@ Base system playbook with XFCE desktop and LightDM.
 ## jrun example
 
 ```ucl
-jail "hypha-desktop" {
+base {
   setup {
     desktop {
       type = "ansible";
