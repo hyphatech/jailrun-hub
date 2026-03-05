@@ -55,4 +55,9 @@
 
     - name: Create database
       ansible.builtin.command: mysql -u root -e "CREATE DATABASE IF NOT EXISTS {{ MYSQL_DB }}"
+      register: createdb
+      failed_when: >
+        createdb.rc != 0 and
+        ('ERROR 3678' not in (createdb.stderr | default(''))) and
+        ('Schema directory' not in (createdb.stderr | default('')))
       when: MYSQL_DB | length > 0
