@@ -9,6 +9,10 @@
     NGINX_ACCESS_LOG: "/var/log/nginx/access.log"
     NGINX_ERROR_LOG: "/var/log/nginx/error.log"
 
+    NGINX_CONF_DIR: "/usr/local/etc/nginx"
+    NGINX_CONF_FILE: "nginx.conf"
+    NGINX_CONF_PATH: "{{ NGINX_CONF_DIR }}/{{ NGINX_CONF_FILE }}"
+
   tasks:
     - name: Install nginx
       ansible.builtin.command: pkg install -y nginx
@@ -28,10 +32,16 @@
         state: directory
         mode: "0755"
 
+    - name: Ensure nginx config directory exists
+      ansible.builtin.file:
+        path: "{{ NGINX_CONF_DIR }}"
+        state: directory
+        mode: "0755"
+
     - name: Install nginx.conf from template
       ansible.builtin.template:
         src: nginx.conf.j2
-        dest: /usr/local/etc/nginx/nginx.conf
+        dest: "{{ NGINX_CONF_PATH }}"
         mode: "0644"
       notify: reload nginx
 
@@ -43,7 +53,7 @@
       notify: reload nginx
 
     - name: Test nginx config
-      ansible.builtin.command: nginx -t
+      ansible.builtin.command: nginx -t -c {{ NGINX_CONF_PATH }}
       register: nginx_test
       changed_when: false
 

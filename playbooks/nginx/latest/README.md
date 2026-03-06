@@ -19,13 +19,15 @@ jail "hypha-nginx" {
   }
 }
 ```
-
 ## Variables
 
-| Variable            | Description        | Default                     |
-|---------------------|--------------------|-----------------------------|
-| `NGINX_LISTEN_PORT` | Nginx listen port  | `80`                        |
-| `NGINX_SERVER_NAME` | `server_name`      | `_`                         |
-| `NGINX_ROOT`        | Document root      | `/usr/local/www/nginx`      |
-| `NGINX_ACCESS_LOG`  | Access log path    | `/var/log/nginx/access.log` |
-| `NGINX_ERROR_LOG`   | Error log path     | `/var/log/nginx/error.log`  |
+| Variable            | Description              | Default                           |
+|---------------------|--------------------------|-----------------------------------|
+| `NGINX_LISTEN_PORT` | Nginx listen port        | `80`                              |
+| `NGINX_SERVER_NAME` | `server_name`            | `_`                               |
+| `NGINX_ROOT`        | Document root            | `/usr/local/www/nginx`            |
+| `NGINX_ACCESS_LOG`  | Access log path          | `/var/log/nginx/access.log`       |
+| `NGINX_ERROR_LOG`   | Error log path           | `/var/log/nginx/error.log`        |
+| `NGINX_CONF_DIR`    | Nginx config directory   | `/usr/local/etc/nginx`            |
+| `NGINX_CONF_FILE`   | Nginx config file name   | `nginx.conf`                      |
+| `NGINX_CONF_PATH`   | Full Nginx config path   | `/usr/local/etc/nginx/nginx.conf` |
