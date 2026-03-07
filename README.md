@@ -32,10 +32,13 @@ A curated collection of Ansible playbooks for [jrun](https://github.com/hyphatec
 | Playbook | Description |
 | --- | --- |
 | [`astronvim`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/astronvim/latest) | [AstroNvim](https://astronvim.com/) aesthetically pleasing and feature-rich Neovim configuration. |
+| [`clojure`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/clojure/latest) | [Clojure](https://clojure.org/) dynamic, functional dialect of Lisp on the JVM. |
+| [`ocaml`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ocaml/latest) | [OCaml](https://ocaml.org/) general-purpose functional language with a powerful type system. |
 
 ## Base Playbooks
 
 ### Desktop
+
 | Playbook | Description |
 | --- | --- |
 | [`kde`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/kde/latest) | [Plasma (KDE)](https://kde.org/plasma-desktop/) desktop environment (KDE project). |

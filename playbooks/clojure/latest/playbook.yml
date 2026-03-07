@@ -1,0 +1,30 @@
+- name: Clojure
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Install dependencies
+      ansible.builtin.package:
+        name:
+          - openjdk21
+          - curl
+          - rlwrap
+          - bash
+          - p5-Digest-SHA
+        state: present
+
+    - name: Download posix-install script
+      ansible.builtin.command: >
+        fetch -o /root/posix-install.sh
+        https://github.com/clojure/brew-install/releases/latest/download/posix-install.sh
+      args:
+        creates: /root/posix-install.sh
+
+    - name: Make install script executable
+      ansible.builtin.file:
+        path: /root/posix-install.sh
+        mode: "0755"
+
+    - name: Install Clojure
+      ansible.builtin.command: /root/posix-install.sh
+      args:
+        creates: /usr/local/bin/clojure
