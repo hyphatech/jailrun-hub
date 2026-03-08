@@ -9,7 +9,7 @@ jail "hypha-clojure" {
   setup {
     clojure {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/clojure/latest/playbook.yml";
+      url  = "hub://clojure/latest";
     }
   }
 }

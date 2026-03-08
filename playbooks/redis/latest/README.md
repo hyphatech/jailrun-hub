@@ -9,7 +9,7 @@ jail "hypha-redis" {
   setup {
     redis {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/redis/latest/playbook.yml";
+      url  = "hub://redis/latest";
     }
   }
   forward {

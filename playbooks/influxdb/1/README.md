@@ -9,7 +9,7 @@ jail "hypha-influxdb" {
   setup {
     influxdb {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/influxdb/1/playbook.yml";
+      url  = "hub://influxdb/1";
     }
   }
   forward {

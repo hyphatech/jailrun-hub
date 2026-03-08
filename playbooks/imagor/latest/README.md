@@ -9,7 +9,7 @@ jail "hypha-imagor" {
   setup {
     imagor {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/imagor/latest/playbook.yml";
+      url  = "hub://imagor/latest";
     }
   }
   forward {

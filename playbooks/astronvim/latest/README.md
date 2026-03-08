@@ -9,7 +9,7 @@ jail "hypha-astronvim" {
   setup {
     astronvim {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/astronvim/latest/playbook.yml";
+      url  = "hub://astronvim/latest";
     }
   }
 }

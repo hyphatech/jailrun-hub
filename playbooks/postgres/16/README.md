@@ -9,7 +9,7 @@ jail "hypha-postgres-16" {
   setup {
     pg {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/postgres/16/playbook.yml";
+      url  = "hub://postgres/16";
     }
   }
   forward {

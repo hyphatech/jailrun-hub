@@ -9,7 +9,7 @@ jail "hypha-ocaml" {
   setup {
     ocaml {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/ocaml/latest/playbook.yml";
+      url  = "hub://ocaml/latest";
     }
   }
 }

@@ -9,7 +9,7 @@ base {
   setup {
     desktop {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/kde/latest/playbook.yml";
+      url  = "hub://kde/latest";
     }
   }
 }

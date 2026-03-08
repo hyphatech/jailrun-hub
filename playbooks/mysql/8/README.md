@@ -9,7 +9,7 @@ jail "hypha-mysql-8" {
   setup {
     mysql {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/mysql/8/playbook.yml";
+      url  = "hub://mysql/8";
     }
   }
   forward {

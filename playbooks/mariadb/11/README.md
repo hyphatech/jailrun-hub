@@ -9,7 +9,7 @@ jail "hypha-mariadb-11" {
   setup {
     mariadb {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/mariadb/11/playbook.yml";
+      url  = "hub://mariadb/11";
     }
   }
   forward {

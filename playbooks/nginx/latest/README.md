@@ -9,7 +9,7 @@ jail "hypha-nginx" {
   setup {
     nginx {
       type = "ansible";
-      url  = "https://github.com/hyphatech/jailrun-hub/blob/main/playbooks/nginx/latest/playbook.yml";
+      url  = "hub://nginx/latest";
       vars { NGINX_LISTEN_PORT = "88"; }
     }
   }
