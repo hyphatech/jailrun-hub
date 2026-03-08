@@ -20,7 +20,7 @@ jail "hypha-influxdb" {
 
 ## Variables
 
-| Variable                    | Description                                                     | Default        |
-|-----------------------------|-----------------------------------------------------------------|----------------|
-| `INFLUXD_HTTP_BIND_ADDRESS` | Value for `[http].bind-address`                                 | `0.0.0.0:8086` |
-| `INFLUXD_REPORTING`         | Enable telemetry reporting (inverts `reporting-disabled`)       | `false`        |
+| Variable                    | Description                                                  | Default        |
+|-----------------------------|--------------------------------------------------------------|----------------|
+| `INFLUXD_HTTP_BIND_ADDRESS` | Value for `[http].bind-address`                              | `0.0.0.0:8086` |
+| `INFLUXD_REPORTING`         | Enable telemetry reporting (inverts `reporting-disabled`)    | `false`        |

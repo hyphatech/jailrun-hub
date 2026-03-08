@@ -25,12 +25,15 @@
         path: /usr/local/etc/influxd.conf
         regexp: '^reporting-disabled'
         line: "reporting-disabled = {{ (not INFLUXD_REPORTING) | lower }}"
+      notify: restart influxdb
 
     - name: Set HTTP bind address
       ansible.builtin.lineinfile:
         path: /usr/local/etc/influxd.conf
         regexp: '^\s*bind-address\s*='
         line: 'bind-address = "{{ INFLUXD_HTTP_BIND_ADDRESS }}"'
+        insertafter: '^\[http\]'
+      notify: restart influxdb
 
     - name: Start InfluxDB
       ansible.builtin.command: service influxd start
@@ -39,3 +42,7 @@
         influxd_start.rc != 0 and
         'already running' not in (influxd_start.stderr | default('')) and
         'already running' not in (influxd_start.stdout | default(''))
+
+  handlers:
+    - name: restart influxdb
+      ansible.builtin.command: service influxd restart

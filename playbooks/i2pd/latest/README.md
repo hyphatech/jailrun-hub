@@ -39,6 +39,8 @@ Set your browser to use **Manual proxy configuration**:
 - **HTTP Proxy:** `localhost`, **Port:** `4444`
 - Check **Also use this proxy for HTTPS**
 
-This routes all browser traffic through i2pd. Only `.i2p` sites will resolve. **Use a dedicated browser profile to keep regular browsing unaffected.**
+This routes all browser traffic through i2pd. Only `.i2p` sites will resolve.
+
+**Use a dedicated browser profile to keep regular browsing unaffected.**
 
 Web console is available at `http://127.0.0.1:7070` — wait until the router shows active tunnels before testing `.i2p` sites.
