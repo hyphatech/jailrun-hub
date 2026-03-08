@@ -1,6 +1,6 @@
-# jrun-hub
+# Jailrun Hub
 
-A curated collection of Ansible playbooks for [jrun](https://github.com/hyphatech/jailrun), ready to provision your jails and VM bases.
+A curated collection of Ansible playbooks for [Jailrun](https://github.com/hyphatech/jailrun), ready to provision your jails and VM bases.
 
 ## Jail Playbooks
 
