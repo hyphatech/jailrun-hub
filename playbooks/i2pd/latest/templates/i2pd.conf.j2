@@ -1,0 +1,19 @@
+datadir = {{ I2PD_DATA_DIR }}
+log = file
+logfile = {{ I2PD_LOG_FILE }}
+loglevel = warn
+
+[http]
+enabled = true
+address = {{ I2PD_LISTEN_ADDRESS }}
+port = {{ I2PD_WEBCONSOLE_PORT }}
+
+[httpproxy]
+enabled = true
+address = {{ I2PD_LISTEN_ADDRESS }}
+port = {{ I2PD_HTTP_PROXY_PORT }}
+
+[socksproxy]
+enabled = true
+address = {{ I2PD_LISTEN_ADDRESS }}
+port = {{ I2PD_SOCKS_PROXY_PORT }}

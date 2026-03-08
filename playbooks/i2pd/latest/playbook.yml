@@ -1,0 +1,67 @@
+- name: i2pd
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    I2PD_LOG_DIR: "/var/log/i2pd"
+    I2PD_LOG_FILE: "{{ I2PD_LOG_DIR }}/i2pd.log"
+    I2PD_DATA_DIR: "/var/db/i2pd"
+    I2PD_CONF_DIR: "/usr/local/etc/i2pd"
+    I2PD_CONF_FILE: "i2pd.conf"
+    I2PD_CONF_PATH: "{{ I2PD_CONF_DIR }}/{{ I2PD_CONF_FILE }}"
+    I2PD_TUNNELS_FILE: "tunnels.conf"
+    I2PD_TUNNELS_PATH: "{{ I2PD_CONF_DIR }}/{{ I2PD_TUNNELS_FILE }}"
+    I2PD_HTTP_PROXY_PORT: 4444
+    I2PD_SOCKS_PROXY_PORT: 4447
+    I2PD_WEBCONSOLE_PORT: 7070
+    I2PD_LISTEN_ADDRESS: "127.0.0.1"
+
+  tasks:
+    - name: Install i2pd
+      ansible.builtin.command: pkg install -y i2pd
+
+    - name: Enable i2pd
+      ansible.builtin.command: sysrc i2pd_enable=YES
+
+    - name: Ensure data directory exists
+      ansible.builtin.file:
+        path: "{{ I2PD_DATA_DIR }}"
+        state: directory
+        mode: "0750"
+
+    - name: Ensure log directory exists
+      ansible.builtin.file:
+        path: "{{ I2PD_LOG_DIR }}"
+        state: directory
+        mode: "0750"
+
+    - name: Ensure config directory exists
+      ansible.builtin.file:
+        path: "{{ I2PD_CONF_DIR }}"
+        state: directory
+        mode: "0755"
+
+    - name: Install i2pd.conf from template
+      ansible.builtin.template:
+        src: i2pd.conf.j2
+        dest: "{{ I2PD_CONF_PATH }}"
+        mode: "0644"
+      notify: restart i2pd
+
+    - name: Install tunnels.conf from template
+      ansible.builtin.template:
+        src: tunnels.conf.j2
+        dest: "{{ I2PD_TUNNELS_PATH }}"
+        mode: "0644"
+      notify: restart i2pd
+
+    - name: Ensure i2pd is running
+      ansible.builtin.command: service i2pd start
+      register: i2pd_start
+      failed_when: >
+        i2pd_start.rc != 0 and
+        'already running' not in (i2pd_start.stderr | default(''))
+
+  handlers:
+    - name: restart i2pd
+      ansible.builtin.command: service i2pd restart

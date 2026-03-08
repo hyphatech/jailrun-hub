@@ -21,6 +21,12 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | [`ffmpeg-7`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ffmpeg/7) | [FFmpeg](https://ffmpeg.org/) multimedia framework (encode/decode/transcode). |
 | [`imagor`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/imagor/latest) | [Imagor](https://github.com/cshum/imagor) image processing service. |
 
+### Security
+
+| Playbook | Description |
+| --- | --- |
+| [`i2pd`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/latest) | [I2PD](https://i2pd.website/) I2P router for anonymous network access. |
+
 ### Web
 
 | Playbook | Description |
@@ -47,10 +53,12 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 ## Layout
 
 Playbooks are versioned and stored under:
+
 - `playbooks/<name>/<version>/playbook.yml`
 - `playbooks/<name>/<version>/README.md`
 
 Examples:
+
 - `playbooks/nginx/latest/playbook.yml`
 - `playbooks/postgres/16/playbook.yml`
 
