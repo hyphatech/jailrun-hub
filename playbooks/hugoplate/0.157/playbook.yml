@@ -1,0 +1,199 @@
+- name: Hugoplate
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    HUGO_VERSION: "0.157.0"
+    HUGO_EXTENDED: true
+    HUGO_SITE_DIR: "/usr/local/www/hugo"
+    HUGO_BASE_URL: "http://localhost"
+    HUGO_SITE_TITLE: "Jailed Hugoplate"
+    HUGOPLATE_REPO: "https://github.com/zeon-studio/hugoplate.git"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - ca_root_nss
+          - git
+          - go
+          - node24
+          - npm-node24
+          - rust
+        state: present
+
+    - name: Install CGO dependencies for extended edition
+      ansible.builtin.package:
+        name:
+          - gcc
+          - pkgconf
+        state: present
+      when: HUGO_EXTENDED | bool
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Ensure Hugo site directory exists
+      ansible.builtin.file:
+        path: "{{ HUGO_SITE_DIR }}"
+        state: directory
+        mode: "0755"
+
+    - name: Check installed Hugo version
+      ansible.builtin.command: /usr/local/bin/hugo version
+      register: hugo_version_check
+      changed_when: false
+      failed_when: false
+
+    - name: Build and install hugo (extended)
+      ansible.builtin.command: >
+        env GOPATH=/root/go GOBIN=/usr/local/bin CGO_ENABLED=1
+        go install -tags extended github.com/gohugoio/hugo@v{{ HUGO_VERSION }}
+      when:
+        - HUGO_EXTENDED | bool
+        - hugo_version_check.rc != 0 or ('v' ~ HUGO_VERSION) not in (hugo_version_check.stdout | default(''))
+
+    - name: Build and install hugo (standard)
+      ansible.builtin.command: >
+        env GOPATH=/root/go GOBIN=/usr/local/bin
+        go install github.com/gohugoio/hugo@v{{ HUGO_VERSION }}
+      when:
+        - not (HUGO_EXTENDED | bool)
+        - hugo_version_check.rc != 0 or ('v' ~ HUGO_VERSION) not in (hugo_version_check.stdout | default(''))
+
+    - name: Check for existing Hugo project
+      ansible.builtin.stat:
+        path: "{{ HUGO_SITE_DIR }}/hugo.toml"
+      register: hugo_project
+
+    - name: Remove old temporary Hugoplate clone
+      ansible.builtin.file:
+        path: /tmp/hugoplate
+        state: absent
+      when: not hugo_project.stat.exists
+
+    - name: Clone Hugoplate starter
+      ansible.builtin.git:
+        repo: "{{ HUGOPLATE_REPO }}"
+        dest: /tmp/hugoplate
+        depth: 1
+        single_branch: true
+      when: not hugo_project.stat.exists
+
+    - name: Remove git history from temp clone
+      ansible.builtin.file:
+        path: /tmp/hugoplate/.git
+        state: absent
+      when: not hugo_project.stat.exists
+
+    - name: Copy Hugoplate into project directory
+      ansible.builtin.command: >
+        cp -R /tmp/hugoplate/. {{ HUGO_SITE_DIR }}/
+      when: not hugo_project.stat.exists
+
+    - name: Clean up temp clone
+      ansible.builtin.file:
+        path: /tmp/hugoplate
+        state: absent
+      when: not hugo_project.stat.exists
+
+    - name: Install npm dependencies
+      ansible.builtin.command: npm install
+      args:
+        chdir: "{{ HUGO_SITE_DIR }}"
+        creates: "{{ HUGO_SITE_DIR }}/node_modules"
+
+    - name: Run Hugoplate project setup
+      ansible.builtin.command: npm run project-setup
+      args:
+        chdir: "{{ HUGO_SITE_DIR }}"
+      when: not hugo_project.stat.exists
+
+    - name: Get installed lightningcss version
+      ansible.builtin.command:
+        cmd: node -p "require('./node_modules/lightningcss/package.json').version"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: lightningcss_version
+      changed_when: false
+
+    - name: Get installed @tailwindcss/oxide version
+      ansible.builtin.command:
+        cmd: node -p "require('./node_modules/@tailwindcss/oxide/package.json').version"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: tailwindcss_oxide_version
+      changed_when: false
+
+    - name: Derive git tags for native builds
+      ansible.builtin.set_fact:
+        lightningcss_tag: "v{{ lightningcss_version.stdout | regex_replace('\\.[0-9]+$', '.0') }}"
+        tailwindcss_tag: "v{{ tailwindcss_oxide_version.stdout | regex_replace('\\.[0-9]+$', '.0') }}"
+
+    - name: Check lightningcss native binding
+      ansible.builtin.stat:
+        path: "{{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node"
+      register: lightningcss_node
+
+    - name: Clone lightningcss source
+      ansible.builtin.git:
+        repo: https://github.com/parcel-bundler/lightningcss.git
+        dest: /tmp/lightningcss
+        depth: 1
+        version: "{{ lightningcss_tag }}"
+      when: not lightningcss_node.stat.exists
+
+    - name: Build and install lightningcss native binding
+      ansible.builtin.shell: |
+        cd /tmp/lightningcss
+        cargo build --release -p lightningcss_node
+        cp target/release/liblightningcss_node.so {{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node
+      when: not lightningcss_node.stat.exists
+
+    - name: Check @tailwindcss/oxide native binding
+      ansible.builtin.stat:
+        path: "{{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node"
+      register: tailwindcss_oxide_node
+
+    - name: Clone tailwindcss source
+      ansible.builtin.git:
+        repo: https://github.com/tailwindlabs/tailwindcss.git
+        dest: /tmp/tailwindcss
+        depth: 1
+        version: "{{ tailwindcss_tag }}"
+      when: not tailwindcss_oxide_node.stat.exists
+
+    - name: Build and install @tailwindcss/oxide native binding
+      ansible.builtin.shell: |
+        cd /tmp/tailwindcss
+        cargo build --release -p tailwind-oxide
+        cp target/release/libtailwind_oxide.so {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node
+      when: not tailwindcss_oxide_node.stat.exists
+
+    - name: Clean up native build sources
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/lightningcss
+        - /tmp/tailwindcss
+
+    - name: Download Hugo modules
+      ansible.builtin.command: /usr/local/bin/hugo mod get
+      args:
+        chdir: "{{ HUGO_SITE_DIR }}"
+      changed_when: false
+
+    - name: Set baseURL
+      ansible.builtin.lineinfile:
+        path: "{{ HUGO_SITE_DIR }}/hugo.toml"
+        regexp: '^baseURL\s*='
+        line: 'baseURL = "{{ HUGO_BASE_URL }}"'
+
+    - name: Set site title
+      ansible.builtin.lineinfile:
+        path: "{{ HUGO_SITE_DIR }}/hugo.toml"
+        regexp: '^title\s*='
+        line: 'title = "{{ HUGO_SITE_TITLE }}"'

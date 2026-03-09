@@ -38,6 +38,7 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | Playbook | Description |
 | --- | --- |
 | [`hugo`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugo/0.157) | [Hugo](https://gohugo.io/) fast and flexible static site generator. |
+| [`hugoplate`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugoplate/0.157) | [Hugoplate](https://github.com/zeon-studio/hugoplate) popular Hugo starter kit. |
 | [`nginx`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/nginx/latest) | [Nginx](https://nginx.org/) web server with a basic default config. |
 
 ### Development

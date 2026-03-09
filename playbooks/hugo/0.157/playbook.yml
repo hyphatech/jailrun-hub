@@ -9,7 +9,7 @@
     HUGO_SITE_DIR: "/usr/local/www/hugo"
     HUGO_THEME: "ananke"
     HUGO_THEME_REPO: "https://github.com/theNewDynamic/gohugo-theme-ananke.git"
-    HUGO_BASE_URL: "http://localhost/"
+    HUGO_BASE_URL: "http://localhost"
 
   tasks:
     - name: Install base packages

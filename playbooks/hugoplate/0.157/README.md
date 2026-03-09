@@ -1,15 +1,15 @@
-# Hugo (0.157)
+# Hugoplate (Hugo 0.157 and Tailwind 4)
 
-A fast and flexible open-source static site generator. Scaffolds a new site with lightweight `ananke` theme if no existing project is found.
+Popular Hugo + Tailwind CSS Starter and Boilerplate.
 
 ## jrun example
 
 ```ucl
-jail "hypha-hugo" {
+jail "hypha-hugoplate" {
   setup {
     hugo {
       type = "ansible";
-      url  = "hub://hugo/0.157";
+      url  = "hub://hugoplate/0.157";
       vars {
         HUGO_SITE_DIR = "/srv/project";
       }
@@ -32,11 +32,11 @@ jail "hypha-hugo" {
 Hugo includes a simple web server for development:
 
 ```ucl
-jail "hypha-hugo" {
+jail "hypha-hugoplate" {
   setup {
     hugo {
       type = "ansible";
-      url  = "hub://hugo/0.157";
+      url  = "hub://hugoplate/0.157";
       vars { HUGO_SITE_DIR = "/srv/project"; }
     }
   }
@@ -60,7 +60,7 @@ jail "hypha-hugo" {
 For a production-like setup, use nginx to serve the generated static files:
 
 ```ucl
-jail "hypha-hugo" {
+jail "hypha-hugoplate" {
   setup {
     hugo {
       type = "ansible";
@@ -104,12 +104,10 @@ jail "hypha-nginx" {
 
 ## Variables
 
-| Variable          | Default                                                    | Description                                       |
-|-------------------|------------------------------------------------------------|---------------------------------------------------|
-| `PACKAGES`        | `[]`                                                       | Additional packages to install via `pkg`          |
-| `HUGO_VERSION`    | `0.157.0`                                                  | Hugo version to install                           |
-| `HUGO_EXTENDED`   | `true`                                                     | Build the extended edition (SCSS/PostCSS support) |
-| `HUGO_SITE_DIR`   | `/usr/local/www/hugo`                                      | Directory for the Hugo project                    |
-| `HUGO_THEME`      | `ananke`                                                   | Theme name                                        |
-| `HUGO_THEME_REPO` | `https://github.com/theNewDynamic/gohugo-theme-ananke.git` | Git repository for the theme                      |
-| `HUGO_BASE_URL`   | `http://localhost/`                                        | Site base URL                                     |
+| Variable          | Default                 | Description                                       |
+|-------------------|-------------------------|---------------------------------------------------|
+| `PACKAGES`        | `[]`                    | Additional packages to install via `pkg`          |
+| `HUGO_VERSION`    | `0.157.0`               | Hugo version to install                           |
+| `HUGO_EXTENDED`   | `true`                  | Build the extended edition (SCSS/PostCSS support) |
+| `HUGO_SITE_DIR`   | `/usr/local/www/hugo`   | Directory for the Hugo project                    |
+| `HUGO_BASE_URL`   | `http://localhost`      | Site base URL                                     |
