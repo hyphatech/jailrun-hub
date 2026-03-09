@@ -1,0 +1,43 @@
+- name: Redis
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    REDIS_BIND_ADDRESS: "0.0.0.0"
+    REDIS_PROTECTED_MODE: "no"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - redis
+        state: present
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Enable Redis
+      ansible.builtin.command: sysrc redis_enable=YES
+
+    - name: Bind address
+      ansible.builtin.lineinfile:
+        path: /usr/local/etc/redis.conf
+        regexp: "^bind"
+        line: "bind {{ REDIS_BIND_ADDRESS }}"
+
+    - name: Set protected mode
+      ansible.builtin.lineinfile:
+        path: /usr/local/etc/redis.conf
+        regexp: "^protected-mode"
+        line: "protected-mode {{ REDIS_PROTECTED_MODE }}"
+
+    - name: Start Redis
+      ansible.builtin.command: service redis start
+      register: redis_start
+      failed_when: >
+        redis_start.rc != 0 and
+        'already running' not in (redis_start.stderr | default(''))

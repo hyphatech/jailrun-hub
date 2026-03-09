@@ -1,0 +1,4 @@
+cbe3e0206951e96c712c09e3ce5b5768921c70200b3bb3c4ea3cb1c3f0807ee9  README.md
+a87470a9ebe367f2b771bbf74dd6471f3709063edf6d3f519eeb57b647dd8733  playbook.yml
+fe56066398f5dc99ad1fdda36bcadeb268f92df8c904a08c9e228801692fec75  templates/index.html.j2
+bf807ab10c569d2cba7eb7957f847fa5619dbc6da709e587f7092bfdad5338f4  templates/nginx.conf.j2

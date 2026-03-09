@@ -20,9 +20,10 @@ jail "hypha-mysql-8" {
 
 ## Variables
 
-| Variable               | Description                           | Default   |
-|------------------------|---------------------------------------|-----------|
-| `MYSQL_BIND_ADDRESS`   | MySQL bind address (`bind-address`)   | `0.0.0.0` |
-| `MYSQL_DB`             | Database to create                    | `testdb`  |
-| `MYSQL_TEST_USER`      | Test user to create (`'%'` host)      | `test`    |
-| `MYSQL_TEST_PASSWORD`  | Password for test user                | `test`    |
+| Variable               | Description                              | Default   |
+|------------------------|------------------------------------------|-----------|
+| `PACKAGES`             | Additional packages to install via `pkg` | `[]`      |
+| `MYSQL_BIND_ADDRESS`   | MySQL bind address (`bind-address`)      | `0.0.0.0` |
+| `MYSQL_DB`             | Database to create                       | `testdb`  |
+| `MYSQL_TEST_USER`      | Test user to create (`'%'` host)         | `test`    |
+| `MYSQL_TEST_PASSWORD`  | Password for test user                   | `test`    |

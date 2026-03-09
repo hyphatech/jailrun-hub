@@ -3,6 +3,7 @@
   gather_facts: false
 
   vars:
+    PACKAGES: []
     FFMPEG_VERSION: "7.1.3"
     FFMPEG_PREFIX: "/usr/local/ffmpeg7"
 
@@ -13,46 +14,50 @@
       register: ffmpeg_bin
 
     - name: Install ffmpeg build dependencies
-      ansible.builtin.command: pkg install -y {{ item }}
-      loop:
-        - nasm
-        - yasm
-        - pkgconf
-        - gmake
-        - libass
-        - freetype2
-        - fontconfig
-        - harfbuzz
-        - libvorbis
-        - opus
-        - lame
-        - libvpx
-        - x264
-        - x265
-        - aom
-        - dav1d
-        - svt-av1
-        - libjxl
-        - webp
-        - gnutls
-        - gmp
-        - libdrm
-        - libva
-        - libvdpau
-        - frei0r
-        - libbluray
-        - libxml2
-        - librsvg2
-        - lcms2
-        - srt
-        - sekrit-twc-zimg
-        - libdvdnav
-        - libdvdread
-        - libxcb
-      register: ffmpeg_pkg
-      changed_when: "'installed' in (ffmpeg_pkg.stdout | default('')) or 'reinstalled' in (ffmpeg_pkg.stdout | default(''))"
-      failed_when: ffmpeg_pkg.rc != 0
+      ansible.builtin.package:
+        name:
+          - nasm
+          - yasm
+          - pkgconf
+          - gmake
+          - libass
+          - freetype2
+          - fontconfig
+          - harfbuzz
+          - libvorbis
+          - opus
+          - lame
+          - libvpx
+          - x264
+          - x265
+          - aom
+          - dav1d
+          - svt-av1
+          - libjxl
+          - webp
+          - gnutls
+          - gmp
+          - libdrm
+          - libva
+          - libvdpau
+          - frei0r
+          - libbluray
+          - libxml2
+          - librsvg2
+          - lcms2
+          - srt
+          - sekrit-twc-zimg
+          - libdvdnav
+          - libdvdread
+          - libxcb
+        state: present
       when: not ffmpeg_bin.stat.exists
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
 
     - name: Download ffmpeg source
       ansible.builtin.command: >

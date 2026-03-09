@@ -1,15 +1,15 @@
-# FFmpeg 7
+# Clojure (rolling)
 
-Multimedia framework for decoding/encoding/transcoding audio & video.
+Dynamic, functional dialect of Lisp on the JVM.
 
 ## jrun example
 
 ```ucl
-jail "hypha-ffmpeg-7" {
+jail "hypha-clojure" {
   setup {
-    ffmpeg {
+    clojure {
       type = "ansible";
-      url  = "hub://ffmpeg/7";
+      url  = "hub://clojure/rolling";
     }
   }
 }

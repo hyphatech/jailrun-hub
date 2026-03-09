@@ -1,21 +1,20 @@
-- name: MySQL 8
+- name: MariaDB
   hosts: localhost
   gather_facts: false
 
   vars:
     PACKAGES: []
-    MYSQL_PACKAGE: "mysql80-server"
-    MYSQL_BIND_ADDRESS: "0.0.0.0"
-    MYSQL_DB: "testdb"
-    MYSQL_TEST_USER: "test"
-    MYSQL_TEST_PASSWORD: "test"
-    MYSQL_LOWER_CASE_TABLE_NAMES: 1
+    MARIADB_PKG: "mariadb118-server"
+    MARIADB_BIND_ADDRESS: "0.0.0.0"
+    MARIADB_DB: "testdb"
+    MARIADB_TEST_USER: "test"
+    MARIADB_TEST_PASSWORD: "test"
 
   tasks:
     - name: Install base packages
       ansible.builtin.package:
         name:
-          - "{{ MYSQL_PACKAGE }}"
+          - "{{ MARIADB_PKG }}"
         state: present
 
     - name: Install extra packages
@@ -24,46 +23,45 @@
         state: present
       when: PACKAGES | length > 0
 
-    - name: Enable MySQL
+    - name: Enable MariaDB
       ansible.builtin.command: sysrc mysql_enable=YES
 
-    - name: Configure MySQL
+    - name: Configure MariaDB
       ansible.builtin.copy:
         dest: /usr/local/etc/mysql/my.cnf
         content: |
           [mysqld]
-          bind-address = {{ MYSQL_BIND_ADDRESS }}
-          lower_case_table_names = {{ MYSQL_LOWER_CASE_TABLE_NAMES }}
+          bind-address = {{ MARIADB_BIND_ADDRESS }}
 
-    - name: Initialize MySQL (first run)
+    - name: Initialize MariaDB (first run)
       ansible.builtin.command: service mysql-server onestart
       args:
         creates: /var/db/mysql/mysql
 
-    - name: Check if MySQL is running
+    - name: Check if MariaDB is running
       ansible.builtin.command: service mysql-server status
-      register: mysql_status
+      register: mariadb_status
       failed_when: false
       changed_when: false
 
-    - name: Start MySQL
+    - name: Start MariaDB
       ansible.builtin.command: service mysql-server start
-      when: mysql_status.rc != 0
+      when: mariadb_status.rc != 0
 
-    - name: Restart MySQL to apply config
+    - name: Restart MariaDB to apply config
       ansible.builtin.command: service mysql-server restart
-      when: mysql_status.rc == 0
+      when: mariadb_status.rc == 0
 
     - name: Create test user
       ansible.builtin.command: >
         mysql -u root -e
-        "CREATE USER IF NOT EXISTS '{{ MYSQL_TEST_USER }}'@'%' IDENTIFIED BY '{{ MYSQL_TEST_PASSWORD }}';"
+        "CREATE USER IF NOT EXISTS '{{ MARIADB_TEST_USER }}'@'%' IDENTIFIED BY '{{ MARIADB_TEST_PASSWORD }}';"
 
     - name: Grant privileges to test user
       ansible.builtin.command: >
         mysql -u root -e
-        "GRANT ALL PRIVILEGES ON *.* TO '{{ MYSQL_TEST_USER }}'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+        "GRANT ALL PRIVILEGES ON *.* TO '{{ MARIADB_TEST_USER }}'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 
     - name: Create database
-      ansible.builtin.command: mysql -u root -e "CREATE DATABASE IF NOT EXISTS {{ MYSQL_DB }}"
-      when: MYSQL_DB | length > 0
+      ansible.builtin.command: mysql -u root -e "CREATE DATABASE IF NOT EXISTS {{ MARIADB_DB }}"
+      when: MARIADB_DB | length > 0

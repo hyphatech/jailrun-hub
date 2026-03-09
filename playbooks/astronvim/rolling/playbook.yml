@@ -1,0 +1,43 @@
+- name: AstroNvim
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    ASTRONVIM_HOME: "/root"
+    ASTRONVIM_CONFIG_DIR: "{{ ASTRONVIM_HOME }}/.config"
+    ASTRONVIM_NVIM_DIR: "{{ ASTRONVIM_CONFIG_DIR }}/nvim"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - neovim
+          - git
+        state: present
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Create config directory
+      ansible.builtin.file:
+        path: "{{ ASTRONVIM_CONFIG_DIR }}"
+        state: directory
+        mode: "0755"
+
+    - name: Clone AstroNvim template
+      ansible.builtin.git:
+        repo: https://github.com/AstroNvim/template
+        dest: "{{ ASTRONVIM_NVIM_DIR }}"
+        depth: 1
+
+    - name: Remove template git metadata
+      ansible.builtin.file:
+        path: "{{ ASTRONVIM_NVIM_DIR }}/.git"
+        state: absent
+
+    - name: Bootstrap AstroNvim
+      ansible.builtin.command: nvim --headless +q
