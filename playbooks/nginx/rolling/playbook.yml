@@ -58,7 +58,7 @@
     - name: Install default index page from template
       ansible.builtin.template:
         src: welcome.html.j2
-        dest: "{{ NGINX_ROOT }}/{{ NGINX_INDEX_FILE }}"
+        dest: "{{ NGINX_ROOT }}/welcome.html"
         mode: "0644"
       notify: reload nginx
 
