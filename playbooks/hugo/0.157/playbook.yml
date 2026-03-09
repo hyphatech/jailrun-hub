@@ -1,0 +1,106 @@
+- name: Hugo
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    HUGO_VERSION: "0.157.0"
+    HUGO_EXTENDED: "true"
+    HUGO_SITE_DIR: "/usr/local/www/hugo"
+    HUGO_THEME: "ananke"
+    HUGO_THEME_REPO: "https://github.com/theNewDynamic/gohugo-theme-ananke.git"
+    HUGO_BASE_URL: "http://localhost/"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - ca_root_nss
+          - git
+          - go
+        state: present
+
+    - name: Install CGO dependencies for extended edition
+      ansible.builtin.package:
+        name:
+          - gcc
+          - pkgconf
+        state: present
+      when: HUGO_EXTENDED | bool
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Check if hugo is installed
+      ansible.builtin.command: test -x /usr/local/bin/hugo
+      register: hugo_check
+      changed_when: false
+      failed_when: false
+
+    - name: Build and install hugo (extended)
+      ansible.builtin.command: >
+        env GOPATH=/root/go GOBIN=/usr/local/bin CGO_ENABLED=1
+        go install -tags extended github.com/gohugoio/hugo@v{{ HUGO_VERSION }}
+      when: hugo_check.rc != 0 and (HUGO_EXTENDED | bool)
+
+    - name: Build and install hugo (standard)
+      ansible.builtin.command: >
+        env GOPATH=/root/go GOBIN=/usr/local/bin
+        go install github.com/gohugoio/hugo@v{{ HUGO_VERSION }}
+      when: hugo_check.rc != 0 and not (HUGO_EXTENDED | bool)
+
+    - name: Check for existing Hugo project
+      ansible.builtin.stat:
+        path: "{{ HUGO_SITE_DIR }}/hugo.toml"
+      register: hugo_project
+
+    - name: Scaffold new Hugo project
+      ansible.builtin.command: hugo new site {{ HUGO_SITE_DIR }} --force
+      when: not hugo_project.stat.exists
+
+    - name: Clone theme to temp
+      ansible.builtin.command: >
+        git clone --depth 1 {{ HUGO_THEME_REPO }} /tmp/{{ HUGO_THEME }}
+      args:
+        creates: /tmp/{{ HUGO_THEME }}
+      when: not hugo_project.stat.exists
+
+    - name: Remove theme git history
+      ansible.builtin.file:
+        path: /tmp/{{ HUGO_THEME }}/.git
+        state: absent
+      when: not hugo_project.stat.exists
+
+    - name: Copy theme into project
+      ansible.builtin.command: >
+        cp -R /tmp/{{ HUGO_THEME }} {{ HUGO_SITE_DIR }}/themes/{{ HUGO_THEME }}
+      args:
+        creates: "{{ HUGO_SITE_DIR }}/themes/{{ HUGO_THEME }}"
+      when: not hugo_project.stat.exists
+
+    - name: Write site config
+      ansible.builtin.template:
+        src: templates/hugo.toml.j2
+        dest: "{{ HUGO_SITE_DIR }}/hugo.toml"
+      when: not hugo_project.stat.exists
+
+    - name: Create homepage content
+      ansible.builtin.template:
+        src: templates/_index.md.j2
+        dest: "{{ HUGO_SITE_DIR }}/content/_index.md"
+      when: not hugo_project.stat.exists
+
+    - name: Create posts directory
+      ansible.builtin.file:
+        path: "{{ HUGO_SITE_DIR }}/content/posts"
+        state: directory
+      when: not hugo_project.stat.exists
+
+    - name: Create first post
+      ansible.builtin.template:
+        src: templates/hello.md.j2
+        dest: "{{ HUGO_SITE_DIR }}/content/posts/hello.md"
+      when: not hugo_project.stat.exists
