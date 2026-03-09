@@ -5,11 +5,11 @@ Relational database server.
 ## jrun example
 
 ```ucl
-jail "hypha-postgres" {
+jail "hypha-postgres-16" {
   setup {
     pg {
       type = "ansible";
-      url  = "hub://postgres/rolling";
+      url  = "hub://postgres/16";
     }
   }
   forward {
