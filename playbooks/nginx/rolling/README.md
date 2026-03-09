@@ -32,3 +32,4 @@ jail "hypha-nginx" {
 | `NGINX_CONF_DIR`    | Nginx config directory                   | `/usr/local/etc/nginx`            |
 | `NGINX_CONF_FILE`   | Nginx config file name                   | `nginx.conf`                      |
 | `NGINX_CONF_PATH`   | Full Nginx config path                   | `/usr/local/etc/nginx/nginx.conf` |
+| `NGINX_INDEX_FILE`  | Default index file name                  | `welcome.html`                    |
