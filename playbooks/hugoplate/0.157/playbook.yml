@@ -129,6 +129,7 @@
         chdir: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher"
       environment:
         PYTHON: "{{ ansible_python_interpreter }}"
+        npm_config_python: "{{ ansible_python_interpreter }}"
       when: parcel_watcher_test.rc != 0
 
     - name: Re-test @parcel/watcher native binding
