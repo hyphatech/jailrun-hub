@@ -113,14 +113,6 @@
         chdir: "{{ HUGO_SITE_DIR }}"
       when: not hugo_project.stat.exists
 
-    - name: Rebuild @parcel/watcher native binding
-      ansible.builtin.shell: |
-        rm -rf build
-        node-gyp rebuild --python="{{ ansible_python_interpreter }}"
-      args:
-        chdir: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher"
-      failed_when: false
-
     - name: Test lightningcss native binding
       ansible.builtin.command:
         cmd: node -e "require('lightningcss')"
@@ -204,6 +196,13 @@
       changed_when: false
       failed_when: false
       when: tailwindcss_oxide_test.rc != 0
+
+    - name: Rebuild @parcel/watcher native binding
+      ansible.builtin.shell: |
+        cd "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher" &&
+        rm -rf build &&
+        node-gyp rebuild --python="{{ ansible_python_interpreter }}"
+      failed_when: false
 
     - name: Clean up native build sources
       ansible.builtin.file:
