@@ -172,6 +172,14 @@
         cp target/release/libtailwind_oxide.so {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node
       when: not tailwindcss_oxide_node.stat.exists
 
+    - name: Rebuild @parcel/watcher native binding
+      ansible.builtin.shell: |
+        cd {{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher
+        rm -rf build
+        node-gyp rebuild || true
+      args:
+        creates: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher/build/Release/watcher.node"
+
     - name: Clean up native build sources
       ansible.builtin.file:
         path: "{{ item }}"
