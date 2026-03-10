@@ -197,12 +197,20 @@
       failed_when: false
       when: tailwindcss_oxide_test.rc != 0
 
+    - name: Remove @parcel/watcher build dir
+      ansible.builtin.shell: |
+        cd "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher" && rm -rf build
+
     - name: Rebuild @parcel/watcher native binding
       ansible.builtin.shell: |
-        cd "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher" &&
-        rm -rf build &&
-        node-gyp rebuild --python="{{ ansible_python_interpreter }}"
-      failed_when: false
+        cd "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher" && node-gyp rebuild --python=python3.13 || test -f build/Release/watcher.node
+      changed_when: true
+      register: parcel_watcher_rebuild
+
+    - name: Verify @parcel/watcher loads
+      ansible.builtin.shell: |
+        cd "{{ HUGO_SITE_DIR }}" && node -e "require('@parcel/watcher')"
+      changed_when: false
 
     - name: Clean up native build sources
       ansible.builtin.file:
