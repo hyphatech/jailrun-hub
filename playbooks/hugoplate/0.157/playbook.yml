@@ -124,12 +124,9 @@
     - name: Rebuild @parcel/watcher native binding
       ansible.builtin.shell: |
         rm -rf build
-        node-gyp rebuild
+        node-gyp rebuild --python="{{ ansible_python_interpreter }}"
       args:
         chdir: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher"
-      environment:
-        PYTHON: "{{ ansible_python_interpreter }}"
-        npm_config_python: "{{ ansible_python_interpreter }}"
       failed_when: false
       when: parcel_watcher_test.rc != 0
 
