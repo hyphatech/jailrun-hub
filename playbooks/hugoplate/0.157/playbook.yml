@@ -1,6 +1,7 @@
 - name: Hugoplate
   hosts: localhost
   gather_facts: false
+
   vars:
     PACKAGES: []
     HUGO_VERSION: "0.157.0"
@@ -9,6 +10,7 @@
     HUGO_BASE_URL: "http://localhost/"
     HUGO_SITE_TITLE: "Jailed Hugoplate"
     HUGOPLATE_REPO: "https://github.com/zeon-studio/hugoplate.git"
+
   tasks:
     - name: Install base packages
       ansible.builtin.package:
@@ -121,9 +123,19 @@
 
     - name: Rebuild @parcel/watcher native binding
       ansible.builtin.shell: |
-        cd {{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher
         rm -rf build
-        node-gyp rebuild || true
+        node-gyp rebuild
+      args:
+        chdir: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher"
+      when: parcel_watcher_test.rc != 0
+
+    - name: Re-test @parcel/watcher native binding
+      ansible.builtin.command:
+        cmd: node -e "require('@parcel/watcher')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: parcel_watcher_retest
+      changed_when: false
+      failed_when: false
       when: parcel_watcher_test.rc != 0
 
     - name: Test lightningcss native binding
@@ -152,10 +164,20 @@
 
     - name: Build and install lightningcss native binding
       ansible.builtin.shell: |
-        cd /tmp/lightningcss
         cargo build --release -p lightningcss_node
         cp target/release/liblightningcss_node.so \
            {{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node
+      args:
+        chdir: /tmp/lightningcss
+      when: lightningcss_test.rc != 0
+
+    - name: Re-test lightningcss native binding
+      ansible.builtin.command:
+        cmd: node -e "require('lightningcss')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: lightningcss_retest
+      changed_when: false
+      failed_when: false
       when: lightningcss_test.rc != 0
 
     - name: Test @tailwindcss/oxide native binding
@@ -184,10 +206,20 @@
 
     - name: Build and install @tailwindcss/oxide native binding
       ansible.builtin.shell: |
-        cd /tmp/tailwindcss
         cargo build --release -p tailwind-oxide
         cp target/release/libtailwind_oxide.so \
            {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node
+      args:
+        chdir: /tmp/tailwindcss
+      when: tailwindcss_oxide_test.rc != 0
+
+    - name: Re-test @tailwindcss/oxide native binding
+      ansible.builtin.command:
+        cmd: node -e "require('@tailwindcss/oxide')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: tailwindcss_oxide_retest
+      changed_when: false
+      failed_when: false
       when: tailwindcss_oxide_test.rc != 0
 
     - name: Clean up native build sources
