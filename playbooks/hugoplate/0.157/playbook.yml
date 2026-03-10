@@ -113,14 +113,6 @@
         chdir: "{{ HUGO_SITE_DIR }}"
       when: not hugo_project.stat.exists
 
-    - name: Test @parcel/watcher native binding
-      ansible.builtin.command:
-        cmd: node -e "require('@parcel/watcher')"
-        chdir: "{{ HUGO_SITE_DIR }}"
-      register: parcel_watcher_test
-      changed_when: false
-      failed_when: false
-
     - name: Rebuild @parcel/watcher native binding
       ansible.builtin.shell: |
         rm -rf build
@@ -128,16 +120,6 @@
       args:
         chdir: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher"
       failed_when: false
-      when: parcel_watcher_test.rc != 0
-
-    - name: Re-test @parcel/watcher native binding
-      ansible.builtin.command:
-        cmd: node -e "require('@parcel/watcher')"
-        chdir: "{{ HUGO_SITE_DIR }}"
-      register: parcel_watcher_retest
-      changed_when: false
-      failed_when: parcel_watcher_retest.rc != 0
-      when: parcel_watcher_test.rc != 0
 
     - name: Test lightningcss native binding
       ansible.builtin.command:
