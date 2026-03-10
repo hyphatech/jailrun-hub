@@ -1,16 +1,14 @@
 - name: Hugoplate
   hosts: localhost
   gather_facts: false
-
   vars:
     PACKAGES: []
     HUGO_VERSION: "0.157.0"
     HUGO_EXTENDED: true
     HUGO_SITE_DIR: "/usr/local/www/hugo"
-    HUGO_BASE_URL: "http://localhost"
+    HUGO_BASE_URL: "http://localhost/"
     HUGO_SITE_TITLE: "Jailed Hugoplate"
     HUGOPLATE_REPO: "https://github.com/zeon-studio/hugoplate.git"
-
   tasks:
     - name: Install base packages
       ansible.builtin.package:
@@ -113,12 +111,60 @@
         chdir: "{{ HUGO_SITE_DIR }}"
       when: not hugo_project.stat.exists
 
+    - name: Test @parcel/watcher native binding
+      ansible.builtin.command:
+        cmd: node -e "require('@parcel/watcher')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: parcel_watcher_test
+      changed_when: false
+      failed_when: false
+
+    - name: Rebuild @parcel/watcher native binding
+      ansible.builtin.shell: |
+        cd {{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher
+        rm -rf build
+        node-gyp rebuild || true
+      when: parcel_watcher_test.rc != 0
+
+    - name: Test lightningcss native binding
+      ansible.builtin.command:
+        cmd: node -e "require('lightningcss')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: lightningcss_test
+      changed_when: false
+      failed_when: false
+
     - name: Get installed lightningcss version
       ansible.builtin.command:
         cmd: node -p "require('./node_modules/lightningcss/package.json').version"
         chdir: "{{ HUGO_SITE_DIR }}"
       register: lightningcss_version
       changed_when: false
+      when: lightningcss_test.rc != 0
+
+    - name: Clone lightningcss source
+      ansible.builtin.git:
+        repo: https://github.com/parcel-bundler/lightningcss.git
+        dest: /tmp/lightningcss
+        depth: 1
+        version: "v{{ lightningcss_version.stdout | regex_replace('\\.[0-9]+$', '.0') }}"
+      when: lightningcss_test.rc != 0
+
+    - name: Build and install lightningcss native binding
+      ansible.builtin.shell: |
+        cd /tmp/lightningcss
+        cargo build --release -p lightningcss_node
+        cp target/release/liblightningcss_node.so \
+           {{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node
+      when: lightningcss_test.rc != 0
+
+    - name: Test @tailwindcss/oxide native binding
+      ansible.builtin.command:
+        cmd: node -e "require('@tailwindcss/oxide')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: tailwindcss_oxide_test
+      changed_when: false
+      failed_when: false
 
     - name: Get installed @tailwindcss/oxide version
       ansible.builtin.command:
@@ -126,59 +172,23 @@
         chdir: "{{ HUGO_SITE_DIR }}"
       register: tailwindcss_oxide_version
       changed_when: false
-
-    - name: Derive git tags for native builds
-      ansible.builtin.set_fact:
-        lightningcss_tag: "v{{ lightningcss_version.stdout | regex_replace('\\.[0-9]+$', '.0') }}"
-        tailwindcss_tag: "v{{ tailwindcss_oxide_version.stdout | regex_replace('\\.[0-9]+$', '.0') }}"
-
-    - name: Check lightningcss native binding
-      ansible.builtin.stat:
-        path: "{{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node"
-      register: lightningcss_node
-
-    - name: Clone lightningcss source
-      ansible.builtin.git:
-        repo: https://github.com/parcel-bundler/lightningcss.git
-        dest: /tmp/lightningcss
-        depth: 1
-        version: "{{ lightningcss_tag }}"
-      when: not lightningcss_node.stat.exists
-
-    - name: Build and install lightningcss native binding
-      ansible.builtin.shell: |
-        cd /tmp/lightningcss
-        cargo build --release -p lightningcss_node
-        cp target/release/liblightningcss_node.so {{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node
-      when: not lightningcss_node.stat.exists
-
-    - name: Check @tailwindcss/oxide native binding
-      ansible.builtin.stat:
-        path: "{{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node"
-      register: tailwindcss_oxide_node
+      when: tailwindcss_oxide_test.rc != 0
 
     - name: Clone tailwindcss source
       ansible.builtin.git:
         repo: https://github.com/tailwindlabs/tailwindcss.git
         dest: /tmp/tailwindcss
         depth: 1
-        version: "{{ tailwindcss_tag }}"
-      when: not tailwindcss_oxide_node.stat.exists
+        version: "v{{ tailwindcss_oxide_version.stdout | regex_replace('\\.[0-9]+$', '.0') }}"
+      when: tailwindcss_oxide_test.rc != 0
 
     - name: Build and install @tailwindcss/oxide native binding
       ansible.builtin.shell: |
         cd /tmp/tailwindcss
         cargo build --release -p tailwind-oxide
-        cp target/release/libtailwind_oxide.so {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node
-      when: not tailwindcss_oxide_node.stat.exists
-
-    - name: Rebuild @parcel/watcher native binding
-      ansible.builtin.shell: |
-        cd {{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher
-        rm -rf build
-        node-gyp rebuild || true
-      args:
-        creates: "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher/build/Release/watcher.node"
+        cp target/release/libtailwind_oxide.so \
+           {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node
+      when: tailwindcss_oxide_test.rc != 0
 
     - name: Clean up native build sources
       ansible.builtin.file:
