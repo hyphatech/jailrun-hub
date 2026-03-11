@@ -1,0 +1,114 @@
+- name: IPFS
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+
+    KUBO_VERSION: "0.40.0"
+    KUBO_TAG: "v{{ KUBO_VERSION }}"
+    KUBO_SRC_PARENT: "/usr/local/src"
+    KUBO_SRC_DIR: "{{ KUBO_SRC_PARENT }}/kubo-{{ KUBO_VERSION }}"
+    KUBO_TARBALL: "{{ KUBO_SRC_PARENT }}/kubo-{{ KUBO_VERSION }}.tar.gz"
+    KUBO_URL: "https://github.com/ipfs/kubo/archive/refs/tags/{{ KUBO_TAG }}.tar.gz"
+
+    IPFS_BIN: "/usr/local/bin/ipfs"
+    IPFS_PATH: "/var/db/ipfs/.ipfs"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - ca_root_nss
+          - git
+          - go
+          - gmake
+          - bash
+        state: present
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Ensure source parent directory exists
+      ansible.builtin.file:
+        path: "{{ KUBO_SRC_PARENT }}"
+        state: directory
+        owner: root
+        group: wheel
+        mode: "0755"
+
+    - name: Ensure IPFS repo directory exists
+      ansible.builtin.file:
+        path: "{{ IPFS_PATH }}"
+        state: directory
+        owner: root
+        group: wheel
+        mode: "0700"
+
+    - name: Check installed ipfs version
+      ansible.builtin.command: "{{ IPFS_BIN }} version"
+      register: ipfs_version
+      changed_when: false
+      failed_when: false
+
+    - name: Set whether Kubo build is needed
+      ansible.builtin.set_fact:
+        kubo_build_needed: >-
+          {{
+            ipfs_version.rc != 0
+            or ('ipfs version ' ~ KUBO_VERSION) not in (ipfs_version.stdout | default(''))
+          }}
+
+    - name: Remove old source tree before rebuild
+      ansible.builtin.file:
+        path: "{{ KUBO_SRC_DIR }}"
+        state: absent
+      when: kubo_build_needed
+
+    - name: Download Kubo source tarball
+      ansible.builtin.get_url:
+        url: "{{ KUBO_URL }}"
+        dest: "{{ KUBO_TARBALL }}"
+        mode: "0644"
+      when: kubo_build_needed
+
+    - name: Extract Kubo source tarball
+      ansible.builtin.command: >
+        tar -xzf {{ KUBO_TARBALL }} -C {{ KUBO_SRC_PARENT }}
+      args:
+        creates: "{{ KUBO_SRC_DIR }}"
+      when: kubo_build_needed
+
+    - name: Build Kubo
+      ansible.builtin.command: gmake build
+      args:
+        chdir: "{{ KUBO_SRC_DIR }}"
+      environment:
+        PATH: "/usr/local/bin:/usr/bin:/bin"
+      when: kubo_build_needed
+
+    - name: Install ipfs binary
+      ansible.builtin.command: >
+        install -m 0755 {{ KUBO_SRC_DIR }}/cmd/ipfs/ipfs {{ IPFS_BIN }}
+      when: kubo_build_needed
+
+    - name: Remove Kubo source tree after install
+      ansible.builtin.file:
+        path: "{{ KUBO_SRC_DIR }}"
+        state: absent
+      when: kubo_build_needed
+
+    - name: Check if IPFS repo is initialized
+      ansible.builtin.stat:
+        path: "{{ IPFS_PATH }}/config"
+      register: ipfs_repo
+
+    - name: Initialize IPFS repo
+      ansible.builtin.command: "{{ IPFS_BIN }} init --profile=server"
+      environment:
+        HOME: /root
+        IPFS_PATH: "{{ IPFS_PATH }}"
+      when: not ipfs_repo.stat.exists

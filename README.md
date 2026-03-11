@@ -27,11 +27,12 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | [`influxdb`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/influxdb/1) | [InfluxDB](https://www.influxdata.com/) time-series database. |
 | [`prometheus`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/prometheus/2) | [Prometheus](https://prometheus.io/) monitoring system and time-series database. |
 
-### Security
+### P2P
 
 | Playbook | Description |
 | --- | --- |
 | [`i2pd`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/latest) | [I2PD](https://i2pd.website/) I2P router for anonymous network access. |
+| [`ipfs`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ipfs/0.40) | [IPFS (Kubo)](https://ipfs.tech/) distributed content-addressed storage and peer-to-peer file distribution. |
 
 ### Web
 
@@ -73,7 +74,4 @@ Examples:
 ## Contributing
 
 - Add new playbooks under `playbooks/<name>/<version>/`.
-- Keep a `README.md` next to each `playbook.yml` with:
-  - a 1-line description
-  - a copy/paste `jrun` example
-  - a variables table (or `None.`)
+- Keep a `README.md` next to each `playbook.yml` with relevant UCL example.
