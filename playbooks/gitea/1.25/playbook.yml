@@ -1,0 +1,155 @@
+- name: Gitea
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    GITEA_VERSION: "1.25.4"
+
+    GITEA_SRC_DIR: "/usr/local/src/gitea"
+
+    GITEA_RUN_USER: "git"
+    GITEA_RUN_GROUP: "git"
+
+    GITEA_CONF_DIR: "/usr/local/etc/gitea/conf"
+    GITEA_CONF_FILE: "app.ini"
+    GITEA_CONF_PATH: "{{ GITEA_CONF_DIR }}/{{ GITEA_CONF_FILE }}"
+
+    GITEA_STATE_DIR: "/var/db/gitea"
+    GITEA_WORK_PATH: "{{ GITEA_STATE_DIR }}"
+    GITEA_APP_DATA_PATH: "{{ GITEA_STATE_DIR }}/data"
+    GITEA_REPO_DIR: "{{ GITEA_STATE_DIR }}/gitea-repositories"
+    GITEA_GIT_HOME_PATH: "{{ GITEA_APP_DATA_PATH }}/home"
+    GITEA_DB_PATH: "{{ GITEA_APP_DATA_PATH }}/gitea.db"
+    GITEA_LOG_DIR: "/var/log/gitea"
+
+    GITEA_HTTP_ADDR: "127.0.0.1"
+    GITEA_HTTP_PORT: 3000
+    GITEA_DOMAIN: "localhost"
+    GITEA_ROOT_URL: "http://localhost:3000/"
+
+    GITEA_SSH_DOMAIN: "localhost"
+    GITEA_SSH_PORT: 22
+
+    GITEA_SECRET_KEY: "replace-with-random-secret-1"
+    GITEA_INTERNAL_TOKEN: "replace-with-random-secret-2"
+    GITEA_JWT_SECRET: "replace-with-random-secret-3"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - ca_root_nss
+          - doas
+          - git
+          - go
+          - gmake
+          - node
+          - npm
+          - corepack
+          - bash
+        state: present
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Enable corepack
+      ansible.builtin.command: corepack enable
+      environment:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+
+    - name: Enable pnpm
+      ansible.builtin.command: corepack prepare pnpm@latest --activate
+
+    - name: Ensure git group exists
+      ansible.builtin.group:
+        name: "{{ GITEA_RUN_GROUP }}"
+        state: present
+
+    - name: Ensure git user exists
+      ansible.builtin.user:
+        name: "{{ GITEA_RUN_USER }}"
+        group: "{{ GITEA_RUN_GROUP }}"
+        shell: /usr/sbin/nologin
+        home: "{{ GITEA_GIT_HOME_PATH }}"
+        create_home: false
+        state: present
+
+    - name: Configure doas
+      ansible.builtin.copy:
+        dest: /usr/local/etc/doas.conf
+        content: |
+          permit nopass :wheel
+        owner: root
+        group: wheel
+        mode: "0440"
+
+    - name: Check if gitea is installed
+      ansible.builtin.command: test -x /usr/local/bin/gitea
+      register: gitea_check
+      changed_when: false
+      failed_when: false
+
+    - name: Create source directory
+      ansible.builtin.file:
+        path: "{{ GITEA_SRC_DIR }}"
+        state: directory
+
+    - name: Fetch gitea source
+      ansible.builtin.command: >
+        git clone --branch v{{ GITEA_VERSION }} --depth 1
+        https://github.com/go-gitea/gitea.git {{ GITEA_SRC_DIR }}
+      args:
+        creates: "{{ GITEA_SRC_DIR }}/go.mod"
+      when: gitea_check.rc != 0
+
+    - name: Build gitea
+      ansible.builtin.command: gmake build
+      args:
+        chdir: "{{ GITEA_SRC_DIR }}"
+      environment:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+        TAGS: "bindata sqlite sqlite_unlock_notify"
+      when: gitea_check.rc != 0
+
+    - name: Install gitea binary
+      ansible.builtin.copy:
+        src: "{{ GITEA_SRC_DIR }}/gitea"
+        dest: /usr/local/bin/gitea
+        mode: "0755"
+        remote_src: true
+      when: gitea_check.rc != 0
+
+    - name: Ensure gitea config directory exists
+      ansible.builtin.file:
+        path: "{{ GITEA_CONF_DIR }}"
+        state: directory
+        owner: "{{ GITEA_RUN_USER }}"
+        group: "{{ GITEA_RUN_GROUP }}"
+        mode: "0755"
+
+    - name: Ensure gitea directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ GITEA_RUN_USER }}"
+        group: "{{ GITEA_RUN_GROUP }}"
+        mode: "0750"
+      loop:
+        - "{{ GITEA_STATE_DIR }}"
+        - "{{ GITEA_APP_DATA_PATH }}"
+        - "{{ GITEA_REPO_DIR }}"
+        - "{{ GITEA_GIT_HOME_PATH }}"
+        - "{{ GITEA_LOG_DIR }}"
+        - "{{ GITEA_APP_DATA_PATH }}/ssh"
+
+    - name: Install app.ini
+      ansible.builtin.template:
+        src: app.ini.j2
+        dest: "{{ GITEA_CONF_PATH }}"
+        owner: "{{ GITEA_RUN_USER }}"
+        group: "{{ GITEA_RUN_GROUP }}"
+        mode: "0640"

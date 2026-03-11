@@ -1,0 +1,49 @@
+APP_NAME = Gitea
+RUN_USER = {{ GITEA_RUN_USER }}
+WORK_PATH = {{ GITEA_WORK_PATH }}
+
+[server]
+PROTOCOL         = http
+DOMAIN           = {{ GITEA_DOMAIN }}
+ROOT_URL         = {{ GITEA_ROOT_URL }}
+HTTP_ADDR        = {{ GITEA_HTTP_ADDR }}
+HTTP_PORT        = {{ GITEA_HTTP_PORT }}
+SSH_DOMAIN       = {{ GITEA_SSH_DOMAIN }}
+SSH_PORT         = {{ GITEA_SSH_PORT }}
+START_SSH_SERVER = false
+
+[database]
+DB_TYPE = sqlite3
+PATH    = {{ GITEA_DB_PATH }}
+
+[repository]
+ROOT        = {{ GITEA_REPO_DIR }}
+SCRIPT_TYPE = bash
+HOME_PATH   = {{ GITEA_GIT_HOME_PATH }}
+
+[service]
+DISABLE_REGISTRATION = true
+
+[security]
+INSTALL_LOCK   = true
+SECRET_KEY     = {{ GITEA_SECRET_KEY }}
+INTERNAL_TOKEN = {{ GITEA_INTERNAL_TOKEN }}
+
+[oauth2]
+JWT_SECRET = {{ GITEA_JWT_SECRET }}
+
+[log]
+ROOT_PATH = {{ GITEA_LOG_DIR }}
+
+[storage]
+APP_DATA_PATH = {{ GITEA_APP_DATA_PATH }}
+
+[i18n]
+LANGS = en-US
+NAMES = English
+
+[ssh]
+DISABLE_SSH = false
+SSH_ROOT_PATH = {{ GITEA_APP_DATA_PATH }}/ssh
+SSH_CREATE_AUTHORIZED_KEYS_FILE = true
+SSH_CREATE_AUTHORIZED_PRINCIPALS_FILE = false

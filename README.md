@@ -47,6 +47,7 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | Playbook | Description |
 | --- | --- |
 | [`astronvim`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/astronvim/latest) | [AstroNvim](https://astronvim.com/) aesthetically pleasing and feature-rich Neovim configuration. |
+| [`gitea`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/gitea/latest) | [Gitea](https://about.gitea.com/) self-hosted Git forge with web UI. |
 | [`clojure`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/clojure/latest) | [Clojure](https://clojure.org/) dynamic, functional dialect of Lisp on the JVM. |
 | [`ocaml`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ocaml/latest) | [OCaml](https://ocaml.org/) general-purpose functional language with a powerful type system. |
 
