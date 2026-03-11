@@ -101,6 +101,11 @@
         state: absent
       when: not hugo_project.stat.exists
 
+    - name: Detect Node arch
+      ansible.builtin.command: node -p "process.arch"
+      register: node_arch
+      changed_when: false
+
     - name: Install npm dependencies
       ansible.builtin.command: npm install
       args:
@@ -141,7 +146,7 @@
       ansible.builtin.shell: |
         cargo build --release -p lightningcss_node
         cp target/release/liblightningcss_node.so \
-           {{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-arm64.node
+           {{ HUGO_SITE_DIR }}/node_modules/lightningcss/lightningcss.freebsd-{{ node_arch.stdout }}.node
       args:
         chdir: /tmp/lightningcss
       when: lightningcss_test.rc != 0
@@ -152,7 +157,6 @@
         chdir: "{{ HUGO_SITE_DIR }}"
       register: lightningcss_retest
       changed_when: false
-      failed_when: false
       when: lightningcss_test.rc != 0
 
     - name: Test @tailwindcss/oxide native binding
@@ -183,7 +187,7 @@
       ansible.builtin.shell: |
         cargo build --release -p tailwind-oxide
         cp target/release/libtailwind_oxide.so \
-           {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-arm64.node
+           {{ HUGO_SITE_DIR }}/node_modules/@tailwindcss/oxide/tailwindcss-oxide.freebsd-{{ node_arch.stdout }}.node
       args:
         chdir: /tmp/tailwindcss
       when: tailwindcss_oxide_test.rc != 0
@@ -194,23 +198,35 @@
         chdir: "{{ HUGO_SITE_DIR }}"
       register: tailwindcss_oxide_retest
       changed_when: false
-      failed_when: false
       when: tailwindcss_oxide_test.rc != 0
+
+    - name: Test @parcel/watcher native binding
+      ansible.builtin.command:
+        cmd: node -e "require('@parcel/watcher')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: parcel_watcher_test
+      changed_when: false
+      failed_when: false
 
     - name: Remove @parcel/watcher build dir
       ansible.builtin.shell: |
         cd "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher" && rm -rf build
+      when: parcel_watcher_test.rc != 0
 
     - name: Rebuild @parcel/watcher native binding
       ansible.builtin.shell: |
         cd "{{ HUGO_SITE_DIR }}/node_modules/@parcel/watcher" && node-gyp rebuild --python=python3.13 || test -f build/Release/watcher.node
       changed_when: true
       register: parcel_watcher_rebuild
+      when: parcel_watcher_test.rc != 0
 
-    - name: Verify @parcel/watcher loads
-      ansible.builtin.shell: |
-        cd "{{ HUGO_SITE_DIR }}" && node -e "require('@parcel/watcher')"
+    - name: Re-test @parcel/watcher native binding
+      ansible.builtin.command:
+        cmd: node -e "require('@parcel/watcher')"
+        chdir: "{{ HUGO_SITE_DIR }}"
+      register: parcel_watcher_retest
       changed_when: false
+      when: parcel_watcher_test.rc != 0
 
     - name: Clean up native build sources
       ansible.builtin.file:
