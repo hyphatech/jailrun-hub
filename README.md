@@ -11,14 +11,14 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | [`mariadb-11`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/mariadb/11) | [MariaDB](https://mariadb.org/) 11 database server. |
 | [`mysql-8`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/mysql/8) | [MySQL](https://www.mysql.com/) 8 database server. |
 | [`postgres-16`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/postgres/16) | [PostgreSQL](https://www.postgresql.org/) 16 database server. |
-| [`redis`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/redis/latest) | [Redis](https://github.com/redis/redis) in-memory data store. |
+| [`redis`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/redis/rolling) | [Redis](https://github.com/redis/redis) in-memory data store. |
 
 ### Media
 
 | Playbook | Description |
 | --- | --- |
 | [`ffmpeg-7`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ffmpeg/7) | [FFmpeg](https://ffmpeg.org/) multimedia framework (encode/decode/transcode). |
-| [`imagor`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/imagor/latest) | [Imagor](https://github.com/cshum/imagor) image processing service. |
+| [`imagor`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/imagor/rolling) | [Imagor](https://github.com/cshum/imagor) image processing service. |
 
 ### Monitoring
 
@@ -31,7 +31,7 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 
 | Playbook | Description |
 | --- | --- |
-| [`i2pd`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/latest) | [I2PD](https://i2pd.website/) I2P router for anonymous network access. |
+| [`i2pd`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/rolling) | [I2PD](https://i2pd.website/) I2P router for anonymous network access. |
 | [`ipfs`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ipfs/0.40) | [IPFS (Kubo)](https://ipfs.tech/) distributed content-addressed storage and peer-to-peer file distribution. |
 
 ### Web
@@ -40,16 +40,17 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | --- | --- |
 | [`hugo`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugo/0.157) | [Hugo](https://gohugo.io/) fast and flexible static site generator. |
 | [`hugoplate`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugoplate/0.157) | [Hugoplate](https://github.com/zeon-studio/hugoplate) popular Hugo starter kit. |
-| [`nginx`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/nginx/latest) | [Nginx](https://nginx.org/) web server with a basic default config. |
+| [`nginx`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/nginx/rolling) | [Nginx](https://nginx.org/) web server with a basic default config. |
+| [`haproxy`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/haproxy/rolling) | [HAProxy](https://www.haproxy.org/) reliable, high-performance proxy for TCP and HTTP services. |
 
 ### Development
 
 | Playbook | Description |
 | --- | --- |
-| [`astronvim`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/astronvim/latest) | [AstroNvim](https://astronvim.com/) aesthetically pleasing and feature-rich Neovim configuration. |
-| [`gitea`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/gitea/latest) | [Gitea](https://about.gitea.com/) self-hosted Git forge with web UI. |
-| [`clojure`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/clojure/latest) | [Clojure](https://clojure.org/) dynamic, functional dialect of Lisp on the JVM. |
-| [`ocaml`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ocaml/latest) | [OCaml](https://ocaml.org/) general-purpose functional language with a powerful type system. |
+| [`astronvim`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/astronvim/rolling) | [AstroNvim](https://astronvim.com/) aesthetically pleasing and feature-rich Neovim configuration. |
+| [`gitea`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/gitea/rolling) | [Gitea](https://about.gitea.com/) self-hosted Git forge with web UI. |
+| [`clojure`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/clojure/rolling) | [Clojure](https://clojure.org/) dynamic, functional dialect of Lisp on the JVM. |
+| [`ocaml`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ocaml/rolling) | [OCaml](https://ocaml.org/) general-purpose functional language with a powerful type system. |
 
 ## Base Playbooks
 
@@ -57,8 +58,8 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 
 | Playbook | Description |
 | --- | --- |
-| [`kde`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/kde/latest) | [Plasma (KDE)](https://kde.org/plasma-desktop/) desktop environment (KDE project). |
-| [`xfce`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/xfce/latest) | [XFCE](https://www.xfce.org/) lightweight desktop environment. |
+| [`kde`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/kde/rolling) | [Plasma (KDE)](https://kde.org/plasma-desktop/) desktop environment (KDE project). |
+| [`xfce`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/xfce/rolling) | [XFCE](https://www.xfce.org/) lightweight desktop environment. |
 
 ## Layout
 
@@ -69,7 +70,7 @@ Playbooks are versioned and stored under:
 
 Examples:
 
-- `playbooks/nginx/latest/playbook.yml`
+- `playbooks/nginx/rolling/playbook.yml`
 - `playbooks/postgres/16/playbook.yml`
 
 ## Contributing

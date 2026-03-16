@@ -17,6 +17,6 @@ jail "hypha-ffmpeg-7" {
 
 ## Variables
 
-| Variable           | Default                                  | Description |
-|--------------------|------------------------------------------|-------------|
-| `PACKAGES`         | Additional packages to install via `pkg` | `[]`        |
+| Variable   | Description                              | Default |
+|------------|------------------------------------------|---------|
+| `PACKAGES` | Additional packages to install via `pkg` | `[]`    |

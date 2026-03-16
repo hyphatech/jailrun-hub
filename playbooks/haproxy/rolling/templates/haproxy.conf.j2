@@ -1,0 +1,33 @@
+global
+    daemon
+    maxconn 1024
+{% for raw_line in HAPROXY_GLOBAL_EXTRA.splitlines() %}
+{% set line = raw_line | trim %}
+{% if line %}
+    {{ line }}
+{% endif %}
+{% endfor %}
+
+defaults
+    mode tcp
+    timeout connect 5s
+    timeout client 1m
+    timeout server 1m
+{% for raw_line in HAPROXY_DEFAULTS_EXTRA.splitlines() %}
+{% set line = raw_line | trim %}
+{% if line %}
+    {{ line }}
+{% endif %}
+{% endfor %}
+
+{% for raw_line in HAPROXY_TCP_MAPPINGS.splitlines() %}
+{% set line = raw_line | trim %}
+{% if line %}
+{% set parts = line.split() %}
+listen tcp_{{ parts[0] }}
+    bind *:{{ parts[0] }}
+    mode tcp
+    server remote_{{ loop.index }} {{ parts[1] }}:{{ parts[2] }} check
+
+{% endif %}
+{% endfor %}

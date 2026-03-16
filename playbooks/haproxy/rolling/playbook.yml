@@ -1,0 +1,55 @@
+- name: HAProxy
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    HAPROXY_PACKAGE: haproxy
+    HAPROXY_CONF_DIR: /usr/local/etc
+    HAPROXY_CONF_PATH: /usr/local/etc/haproxy.conf
+
+    HAPROXY_TCP_MAPPINGS: ""
+    HAPROXY_GLOBAL_EXTRA: ""
+    HAPROXY_DEFAULTS_EXTRA: ""
+
+  tasks:
+    - name: Ensure haproxy is installed
+      ansible.builtin.package:
+        name: "{{ HAPROXY_PACKAGE }}"
+        state: present
+
+    - name: Enable haproxy at boot
+      ansible.builtin.command: sysrc haproxy_enable="YES"
+      changed_when: false
+
+    - name: Ensure haproxy config directory exists
+      ansible.builtin.file:
+        path: "{{ HAPROXY_CONF_DIR }}"
+        state: directory
+        mode: "0755"
+
+    - name: Install haproxy config
+      ansible.builtin.template:
+        src: haproxy.conf.j2
+        dest: "{{ HAPROXY_CONF_PATH }}"
+        mode: "0644"
+      register: haproxy_conf_written
+
+    - name: Validate haproxy config
+      ansible.builtin.command: haproxy -c -f {{ HAPROXY_CONF_PATH }}
+      changed_when: false
+
+    - name: Check haproxy status
+      ansible.builtin.command: service haproxy status
+      register: haproxy_status
+      failed_when: false
+      changed_when: false
+
+    - name: Start haproxy if stopped
+      ansible.builtin.command: service haproxy start
+      when: haproxy_status.rc != 0
+
+    - name: Restart haproxy if config changed
+      ansible.builtin.command: service haproxy restart
+      when:
+        - haproxy_status.rc == 0
+        - haproxy_conf_written.changed

@@ -29,8 +29,8 @@ jail "hypha-ipfs" {
 
 ## Variables
 
-| Variable          | Default               | Description                              |
-|-------------------|-----------------------|------------------------------------------|
-| `PACKAGES`        | `[]`                  | Additional packages to install via `pkg` |
-| `KUBO_VERSION`    | `0.40.0`              | Kubo version to build                    |
-| `IPFS_PATH`       | `/var/db/ipfs/.ipfs`  | IPFS repository path                     |
+| Variable       | Description                              | Default              |
+|----------------|------------------------------------------|----------------------|
+| `PACKAGES`     | Additional packages to install via `pkg` | `[]`                 |
+| `KUBO_VERSION` | Kubo version to build                    | `0.40.0`             |
+| `IPFS_PATH`    | IPFS repository path                     | `/var/db/ipfs/.ipfs` |

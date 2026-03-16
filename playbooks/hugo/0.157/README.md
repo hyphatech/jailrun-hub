@@ -104,12 +104,12 @@ jail "hypha-nginx" {
 
 ## Variables
 
-| Variable          | Default                                                    | Description                                       |
-|-------------------|------------------------------------------------------------|---------------------------------------------------|
-| `PACKAGES`        | `[]`                                                       | Additional packages to install via `pkg`          |
-| `HUGO_VERSION`    | `0.157.0`                                                  | Hugo version to install                           |
-| `HUGO_EXTENDED`   | `true`                                                     | Build the extended edition (SCSS/PostCSS support) |
-| `HUGO_SITE_DIR`   | `/usr/local/www/hugo`                                      | Directory for the Hugo project                    |
-| `HUGO_THEME`      | `ananke`                                                   | Theme name                                        |
-| `HUGO_THEME_REPO` | `https://github.com/theNewDynamic/gohugo-theme-ananke.git` | Git repository for the theme                      |
-| `HUGO_BASE_URL`   | `http://localhost/`                                        | Site base URL                                     |
+| Variable          | Description                                       | Default                                                    |
+|-------------------|---------------------------------------------------|------------------------------------------------------------|
+| `PACKAGES`        | Additional packages to install via `pkg`          | `[]`                                                       |
+| `HUGO_VERSION`    | Hugo version to install                           | `0.157.0`                                                  |
+| `HUGO_EXTENDED`   | Build the extended edition (SCSS/PostCSS support) | `true`                                                     |
+| `HUGO_SITE_DIR`   | Directory for the Hugo project                    | `/usr/local/www/hugo`                                      |
+| `HUGO_THEME`      | Theme name                                        | `ananke`                                                   |
+| `HUGO_THEME_REPO` | Git repository for the theme                      | `https://github.com/theNewDynamic/gohugo-theme-ananke.git` |
+| `HUGO_BASE_URL`   | Site base URL                                     | `http://localhost/`                                        |

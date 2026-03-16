@@ -104,10 +104,12 @@ jail "hypha-nginx" {
 
 ## Variables
 
-| Variable          | Default                 | Description                                       |
-|-------------------|-------------------------|---------------------------------------------------|
-| `PACKAGES`        | `[]`                    | Additional packages to install via `pkg`          |
-| `HUGO_VERSION`    | `0.157.0`               | Hugo version to install                           |
-| `HUGO_EXTENDED`   | `true`                  | Build the extended edition (SCSS/PostCSS support) |
-| `HUGO_SITE_DIR`   | `/usr/local/www/hugo`   | Directory for the Hugo project                    |
-| `HUGO_BASE_URL`   | `http://localhost`      | Site base URL                                     |
+| Variable                  | Description                                       | Default                       |
+|---------------------------|---------------------------------------------------|-------------------------------|
+| `PACKAGES`                | Additional packages to install via `pkg`          | `[]`                          |
+| `HAPROXY_PACKAGE`         | HAProxy package name to install via `pkg`         | `haproxy`                     |
+| `HAPROXY_CONF_DIR`        | Directory containing `haproxy.conf`               | `/usr/local/etc`              |
+| `HAPROXY_CONF_PATH`       | Full path to HAProxy config file                  | `/usr/local/etc/haproxy.conf` |
+| `HAPROXY_TCP_MAPPINGS`    | Multiline TCP proxy mappings as `LISTEN HOST PORT`| `""`                          |
+| `HAPROXY_GLOBAL_EXTRA`    | Extra lines appended to the `global` section      | `""`                          |
+| `HAPROXY_DEFAULTS_EXTRA`  | Extra lines appended to the `defaults` section    | `""`                          |
