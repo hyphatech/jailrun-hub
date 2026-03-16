@@ -5,7 +5,7 @@ Reliable, high-performance proxy for TCP and HTTP services.
 ## jrun example
 
 ```ucl
-jail "remote-httpserver" {
+jail "hypha-haproxy" {
   setup {
     haproxy {
       type = "ansible";
