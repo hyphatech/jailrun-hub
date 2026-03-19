@@ -7,6 +7,8 @@
     POSTGRES_LISTEN_ADDRESSES: "*"
     POSTGRES_HBA_RULE: "host all all all trust"
     POSTGRES_DB: "testdb"
+    POSTGRES_USER: ""
+    POSTGRES_PASSWORD: ""
 
   tasks:
     - name: Install base packages
@@ -54,10 +56,28 @@
       ansible.builtin.command: service postgresql reload
       when: pg_status.rc == 0
 
-    - name: Create test database
+    - name: Create database
       ansible.builtin.command: su -m postgres -c 'psql -c "CREATE DATABASE {{ POSTGRES_DB }}"'
       register: createdb
       failed_when: >
         createdb.rc != 0 and
         'already exists' not in (createdb.stderr | default(''))
       when: POSTGRES_DB | length > 0
+
+    - name: Create user with password
+      ansible.builtin.command: >
+        su -m postgres -c "psql -c \"CREATE ROLE {{ POSTGRES_USER }}
+        WITH LOGIN PASSWORD '{{ POSTGRES_PASSWORD }}'\""
+      register: createuser
+      failed_when: >
+        createuser.rc != 0 and
+        'already exists' not in (createuser.stderr | default(''))
+      when: POSTGRES_USER | length > 0
+
+    - name: Grant privileges on database
+      ansible.builtin.command: >
+        su -m postgres -c "psql -c \"GRANT ALL PRIVILEGES
+        ON DATABASE {{ POSTGRES_DB }} TO {{ POSTGRES_USER }}\""
+      when:
+        - POSTGRES_USER | length > 0
+        - POSTGRES_DB | length > 0

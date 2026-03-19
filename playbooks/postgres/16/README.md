@@ -26,3 +26,5 @@ jail "hypha-postgres-16" {
 | `POSTGRES_LISTEN_ADDRESSES` | `listen_addresses` in `postgresql.conf`  | `*`                      |
 | `POSTGRES_HBA_RULE`         | Line appended to `pg_hba.conf`           | `host all all all trust` |
 | `POSTGRES_DB`               | Database name to create                  | `testdb`                 |
+| `POSTGRES_USER`             | Role to create with `LOGIN` privilege    | _(none)_                 |
+| `POSTGRES_PASSWORD`         | Password for the created role            | _(none)_                 |
