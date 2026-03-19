@@ -20,6 +20,13 @@ defaults
 {% endif %}
 {% endfor %}
 
+{% if HAPROXY_TCP_MAPPINGS | trim == "" %}
+listen noop
+    bind 127.0.0.1:65535
+    mode tcp
+    disabled
+{% endif %}
+
 {% for raw_line in HAPROXY_TCP_MAPPINGS.splitlines() %}
 {% set line = raw_line | trim %}
 {% if line %}
