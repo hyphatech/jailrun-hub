@@ -81,3 +81,11 @@
       when:
         - POSTGRES_USER | length > 0
         - POSTGRES_DB | length > 0
+
+    - name: Grant schema privileges
+      ansible.builtin.command: >
+        su -m postgres -c "psql -d {{ POSTGRES_DB }} -c \"GRANT ALL
+        ON SCHEMA public TO {{ POSTGRES_USER }}\""
+      when:
+        - POSTGRES_USER | length > 0
+        - POSTGRES_DB | length > 0
