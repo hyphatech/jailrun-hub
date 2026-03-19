@@ -24,7 +24,7 @@ defaults
 listen noop
     bind 127.0.0.1:65535
     mode tcp
-    disabled
+    tcp-request content reject
 {% endif %}
 
 {% for raw_line in HAPROXY_TCP_MAPPINGS.splitlines() %}
