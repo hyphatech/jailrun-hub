@@ -8,7 +8,7 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 
 | Playbook | Description |
 | --- | --- |
-| [`mariadb-11`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/mariadb/11) | [MariaDB](https://mariadb.org/) 11 database server. |
+| [`mariadb-11`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/mariadb/11.8) | [MariaDB](https://mariadb.org/) 11 database server. |
 | [`mysql-8`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/mysql/8) | [MySQL](https://www.mysql.com/) 8 database server. |
 | [`postgres-16`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/postgres/16) | [PostgreSQL](https://www.postgresql.org/) 16 database server. |
 | [`redis`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/redis/rolling) | [Redis](https://github.com/redis/redis) in-memory data store. |
@@ -18,14 +18,14 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | Playbook | Description |
 | --- | --- |
 | [`ffmpeg-7`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ffmpeg/7) | [FFmpeg](https://ffmpeg.org/) multimedia framework (encode/decode/transcode). |
-| [`imagor`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/imagor/rolling) | [Imagor](https://github.com/cshum/imagor) image processing service. |
+| [`imagor`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/imagor/1.6) | [Imagor](https://github.com/cshum/imagor) image processing service. |
 
 ### Monitoring
 
 | Playbook | Description |
 | --- | --- |
-| [`influxdb`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/influxdb/1) | [InfluxDB](https://www.influxdata.com/) time-series database. |
-| [`prometheus`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/prometheus/2) | [Prometheus](https://prometheus.io/) monitoring system and time-series database. |
+| [`influxdb`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/influxdb/rolling) | [InfluxDB](https://www.influxdata.com/) time-series database. |
+| [`prometheus`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/prometheus/rolling) | [Prometheus](https://prometheus.io/) monitoring system and time-series database. |
 
 ### P2P
 
@@ -48,7 +48,7 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | Playbook | Description |
 | --- | --- |
 | [`astronvim`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/astronvim/rolling) | [AstroNvim](https://astronvim.com/) aesthetically pleasing and feature-rich Neovim configuration. |
-| [`gitea`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/gitea/rolling) | [Gitea](https://about.gitea.com/) self-hosted Git forge with web UI. |
+| [`gitea`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/gitea/1.25) | [Gitea](https://about.gitea.com/) self-hosted Git forge with web UI. |
 | [`clojure`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/clojure/rolling) | [Clojure](https://clojure.org/) dynamic, functional dialect of Lisp on the JVM. |
 | [`ocaml`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ocaml/rolling) | [OCaml](https://ocaml.org/) general-purpose functional language with a powerful type system. |
 
