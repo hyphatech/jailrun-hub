@@ -1,0 +1,27 @@
+---
+icon: material/lan
+---
+
+# P2P
+
+Distributed and anonymous networking protocols and file sharing jails.
+
+<div class="grid cards" markdown>
+
+-   __I2PD__
+
+    ---
+
+    Full-featured C++ implementation of the I2P anonymous overlay network router.
+
+    [:octicons-mark-github-16:`i2pd`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/rolling) · `rolling`
+
+-   __IPFS__
+
+    ---
+
+    Peer-to-peer hypermedia protocol for content-addressed, distributed file storage and sharing.
+
+    [:octicons-mark-github-16:`ipfs`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ipfs/0.40) · `0.40`
+
+</div>
