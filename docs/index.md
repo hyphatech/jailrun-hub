@@ -6,7 +6,7 @@ icon: material/hub
 
 # Jailrun Hub
 
-A curated collection of [Ansible](https://www.ansible.com/) playbooks for [Jailrun](https://github.com/hyphatech/jailrun), ready to provision your jails and VM bases.
+A curated collection of [Ansible](https://www.ansible.com/) playbooks for [Jailrun](https://jail.run), ready to provision your jails and VM bases.
 
 ## Jail playbooks
 
