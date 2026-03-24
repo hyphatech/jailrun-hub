@@ -1,4 +1,4 @@
-# Vault (1.20)
+# Vault (1.21)
 
 Secrets management, encryption as a service, and privileged access management.
 
@@ -9,7 +9,7 @@ jail "hypha-vault" {
   setup {
     vault {
       type = "ansible";
-      url  = "hub://vault/1.20";
+      url  = "hub://vault/1.21";
     }
   }
   forward {
@@ -28,7 +28,7 @@ jail "hypha-vault" {
 | Variable              | Description                              | Default                    |
 |-----------------------|------------------------------------------|----------------------------|
 | `PACKAGES`            | Additional packages to install via `pkg` | `[]`                       |
-| `VAULT_VERSION`       | Vault version to build from source       | `"1.20.4"`                 |
+| `VAULT_VERSION`       | Vault version to build from source       | `"1.21.4"`                 |
 | `VAULT_SRC_DIR`       | Source checkout directory                | `"/usr/local/src/vault"`   |
 | `VAULT_RUN_USER`      | System user used to run Vault            | `"vault"`                  |
 | `VAULT_RUN_GROUP`     | System group used to run Vault           | `"vault"`                  |

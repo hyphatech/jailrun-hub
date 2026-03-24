@@ -56,7 +56,7 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 
 | Playbook | Description |
 | --- | --- |
-| [`vault`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/vault/1.20) | [Vault](https://www.vaultproject.io/) secrets management and encryption as a service. |
+| [`vault`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/vault/1.21) | [Vault](https://www.vaultproject.io/) secrets management and encryption as a service. |
 
 ## Base Playbooks
 

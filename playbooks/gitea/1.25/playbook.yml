@@ -5,16 +5,12 @@
   vars:
     PACKAGES: []
     GITEA_VERSION: "1.25.4"
-
     GITEA_SRC_DIR: "/usr/local/src/gitea"
-
     GITEA_RUN_USER: "git"
     GITEA_RUN_GROUP: "git"
-
     GITEA_CONF_DIR: "/usr/local/etc/gitea/conf"
     GITEA_CONF_FILE: "app.ini"
     GITEA_CONF_PATH: "{{ GITEA_CONF_DIR }}/{{ GITEA_CONF_FILE }}"
-
     GITEA_STATE_DIR: "/var/db/gitea"
     GITEA_WORK_PATH: "{{ GITEA_STATE_DIR }}"
     GITEA_APP_DATA_PATH: "{{ GITEA_STATE_DIR }}/data"
@@ -22,15 +18,12 @@
     GITEA_GIT_HOME_PATH: "{{ GITEA_APP_DATA_PATH }}/home"
     GITEA_DB_PATH: "{{ GITEA_APP_DATA_PATH }}/gitea.db"
     GITEA_LOG_DIR: "/var/log/gitea"
-
     GITEA_HTTP_ADDR: "127.0.0.1"
     GITEA_HTTP_PORT: 3000
     GITEA_DOMAIN: "localhost"
     GITEA_ROOT_URL: "http://localhost:3000/"
-
     GITEA_SSH_DOMAIN: "localhost"
     GITEA_SSH_PORT: 22
-
     GITEA_SECRET_KEY: "replace-with-random-secret-1"
     GITEA_INTERNAL_TOKEN: "replace-with-random-secret-2"
     GITEA_JWT_SECRET: "replace-with-random-secret-3"

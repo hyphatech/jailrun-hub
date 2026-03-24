@@ -4,22 +4,17 @@
 
   vars:
     PACKAGES: []
-    VAULT_VERSION: "1.20.4"
-
+    VAULT_VERSION: "1.21.4"
     VAULT_REPO: "https://github.com/hashicorp/vault.git"
     VAULT_SRC_DIR: "/usr/local/src/vault"
-
     VAULT_RUN_USER: "vault"
     VAULT_RUN_GROUP: "vault"
-
     VAULT_CONF_DIR: "/usr/local/etc/vault"
     VAULT_CONF_FILE: "vault.hcl"
     VAULT_CONF_PATH: "{{ VAULT_CONF_DIR }}/{{ VAULT_CONF_FILE }}"
-
     VAULT_STATE_DIR: "/var/db/vault"
     VAULT_DATA_DIR: "{{ VAULT_STATE_DIR }}/data"
     VAULT_LOG_DIR: "/var/log/vault"
-
     VAULT_API_ADDR: "http://127.0.0.1:8200"
     VAULT_CLUSTER_ADDR: "http://127.0.0.1:8201"
     VAULT_HTTP_ADDR: "127.0.0.1"
@@ -76,6 +71,7 @@
       ansible.builtin.file:
         path: "{{ VAULT_SRC_DIR }}"
         state: directory
+      when: vault_check.rc != 0
 
     - name: Fetch vault source
       ansible.builtin.command: >
@@ -85,21 +81,25 @@
         creates: "{{ VAULT_SRC_DIR }}/go.mod"
       when: vault_check.rc != 0
 
-    - name: Install enumer code generation tool
-      ansible.builtin.command: go install github.com/dmarkham/enumer@latest
+    - name: Download Go modules
+      ansible.builtin.command: go mod download
+      args:
+        chdir: "{{ VAULT_SRC_DIR }}"
       environment:
         GOPATH: /root/go
-        GOBIN: /usr/local/bin
+        PATH: "/usr/local/bin:/usr/bin:/bin"
       when: vault_check.rc != 0
 
     - name: Build vault
-      ansible.builtin.command: gmake dev
+      ansible.builtin.command: gmake quickdev
       args:
         chdir: "{{ VAULT_SRC_DIR }}"
       environment:
         CGO_ENABLED: "0"
-        GOFLAGS: "-trimpath"
         GOPATH: /root/go
+        GOMAXPROCS: "1"
+        GOFLAGS: "-p=1"
+        GOGC: "20"
         PATH: "/usr/local/bin:/usr/bin:/bin"
       when: vault_check.rc != 0
 
