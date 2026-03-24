@@ -47,13 +47,13 @@ jail "hypha-vault" {
 Vault must be initialised once after first start:
 
 ```sh
-vault operator init
+jrun cmd hypha-vault VAULT_ADDR=http://127.0.0.1:8200 vault operator init
 ```
 
 Save the 5 unseal keys and root token — they are shown only once. Then unseal:
 
 ```sh
-vault operator unseal  # run 3 times with 3 different keys
+jrun cmd hypha-vault VAULT_ADDR=http://127.0.0.1:8200 vault operator unseal  # run 3 times with 3 different keys
 ```
 
 Vault must be unsealed again after every restart.
