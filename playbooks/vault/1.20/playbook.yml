@@ -89,7 +89,7 @@
       ansible.builtin.command: go install github.com/dmarkham/enumer@latest
       environment:
         GOPATH: /root/go
-        GOBIN: /root/go/bin
+        GOBIN: /usr/local/bin
       when: vault_check.rc != 0
 
     - name: Build vault
@@ -100,8 +100,7 @@
         CGO_ENABLED: "0"
         GOFLAGS: "-trimpath"
         GOPATH: /root/go
-        GOBIN: /root/go/bin
-        PATH: "/usr/local/bin:/usr/bin:/bin:/root/go/bin"
+        PATH: "/usr/local/bin:/usr/bin:/bin"
       when: vault_check.rc != 0
 
     - name: Install vault binary
