@@ -3,7 +3,7 @@ server_name = "{{ CONTINUWUITY_SERVER_NAME }}"
 database_path = "{{ CONTINUWUITY_STATE_DIR }}"
 media_path = "{{ CONTINUWUITY_MEDIA_DIR }}"
 
-address = "{{ CONTINUWUITY_HTTP_ADDR }}"
+address = ["{{ CONTINUWUITY_HTTP_ADDR }}", "::"]
 port = {{ CONTINUWUITY_HTTP_PORT }}
 
 max_request_size = {{ CONTINUWUITY_MAX_REQUEST_SIZE }}
