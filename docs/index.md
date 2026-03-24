@@ -36,6 +36,14 @@ A curated collection of [Ansible](https://www.ansible.com/) playbooks for [Jailr
 
     [Monitoring](../monitoring/index.md)
 
+-   :material-shield-lock:{ .lg .middle } __Security__
+
+    ---
+
+    Secrets management, encryption, and access control.
+
+    [Security](../security/index.md)
+
 -   :material-lan:{ .lg .middle } __P2P__
 
     ---
@@ -60,12 +68,6 @@ A curated collection of [Ansible](https://www.ansible.com/) playbooks for [Jailr
 
     [Development](../development/index.md)
 
-</div>
-
-## Base playbooks
-
-<div class="grid cards" markdown>
-
 -   :material-monitor:{ .lg .middle } __Desktop__
 
     ---
@@ -75,4 +77,3 @@ A curated collection of [Ansible](https://www.ansible.com/) playbooks for [Jailr
     [Desktop](../desktop/index.md)
 
 </div>
-

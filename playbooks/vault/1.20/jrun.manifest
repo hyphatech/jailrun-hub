@@ -1,0 +1,3 @@
+9ea102edddbc0bf86c86e269c76707341b73f921c3fbcc677f3e6df56237d6f4  README.md
+b42a96ff1bcaba9954e500ddd09c2e2cc714a7029bfe35893978bb0bcf54f2f1  playbook.yml
+4a40f804fdb525892ac5812ad5d23a8a6da476b4bc064c40a4b2ef250ec8c18f  templates/vault.hcl.j2

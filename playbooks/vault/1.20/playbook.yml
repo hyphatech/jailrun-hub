@@ -1,0 +1,146 @@
+- name: Vault
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    VAULT_VERSION: "1.20.4"
+
+    VAULT_REPO: "https://github.com/hashicorp/vault.git"
+    VAULT_SRC_DIR: "/usr/local/src/vault"
+
+    VAULT_RUN_USER: "vault"
+    VAULT_RUN_GROUP: "vault"
+
+    VAULT_CONF_DIR: "/usr/local/etc/vault"
+    VAULT_CONF_FILE: "vault.hcl"
+    VAULT_CONF_PATH: "{{ VAULT_CONF_DIR }}/{{ VAULT_CONF_FILE }}"
+
+    VAULT_STATE_DIR: "/var/db/vault"
+    VAULT_DATA_DIR: "{{ VAULT_STATE_DIR }}/data"
+    VAULT_LOG_DIR: "/var/log/vault"
+
+    VAULT_API_ADDR: "http://127.0.0.1:8200"
+    VAULT_CLUSTER_ADDR: "http://127.0.0.1:8201"
+    VAULT_HTTP_ADDR: "127.0.0.1"
+    VAULT_HTTP_PORT: 8200
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - ca_root_nss
+          - bash
+          - doas
+          - git
+          - go
+          - gmake
+        state: present
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Ensure vault group exists
+      ansible.builtin.group:
+        name: "{{ VAULT_RUN_GROUP }}"
+        state: present
+
+    - name: Ensure vault user exists
+      ansible.builtin.user:
+        name: "{{ VAULT_RUN_USER }}"
+        group: "{{ VAULT_RUN_GROUP }}"
+        shell: /usr/sbin/nologin
+        home: "{{ VAULT_STATE_DIR }}"
+        create_home: false
+        state: present
+
+    - name: Configure doas
+      ansible.builtin.copy:
+        dest: /usr/local/etc/doas.conf
+        content: |
+          permit nopass :wheel
+        owner: root
+        group: wheel
+        mode: "0440"
+
+    - name: Check if vault is installed
+      ansible.builtin.command: test -x /usr/local/bin/vault
+      register: vault_check
+      changed_when: false
+      failed_when: false
+
+    - name: Create source directory
+      ansible.builtin.file:
+        path: "{{ VAULT_SRC_DIR }}"
+        state: directory
+
+    - name: Fetch vault source
+      ansible.builtin.command: >
+        git clone --branch v{{ VAULT_VERSION }} --depth 1
+        {{ VAULT_REPO }} {{ VAULT_SRC_DIR }}
+      args:
+        creates: "{{ VAULT_SRC_DIR }}/go.mod"
+      when: vault_check.rc != 0
+
+    - name: Install enumer code generation tool
+      ansible.builtin.command: go install github.com/dmarkham/enumer@latest
+      environment:
+        GOPATH: /root/go
+        GOBIN: /root/go/bin
+      when: vault_check.rc != 0
+
+    - name: Build vault
+      ansible.builtin.command: gmake dev
+      args:
+        chdir: "{{ VAULT_SRC_DIR }}"
+      environment:
+        CGO_ENABLED: "0"
+        GOFLAGS: "-trimpath"
+        GOPATH: /root/go
+        PATH: "/usr/local/bin:/usr/bin:/bin:/root/go/bin"
+      when: vault_check.rc != 0
+
+    - name: Install vault binary
+      ansible.builtin.copy:
+        src: "{{ VAULT_SRC_DIR }}/bin/vault"
+        dest: /usr/local/bin/vault
+        mode: "0755"
+        remote_src: true
+      when: vault_check.rc != 0
+
+    - name: Ensure vault config directory exists
+      ansible.builtin.file:
+        path: "{{ VAULT_CONF_DIR }}"
+        state: directory
+        owner: "{{ VAULT_RUN_USER }}"
+        group: "{{ VAULT_RUN_GROUP }}"
+        mode: "0755"
+
+    - name: Ensure vault directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ VAULT_RUN_USER }}"
+        group: "{{ VAULT_RUN_GROUP }}"
+        mode: "0750"
+      loop:
+        - "{{ VAULT_STATE_DIR }}"
+        - "{{ VAULT_DATA_DIR }}"
+        - "{{ VAULT_LOG_DIR }}"
+
+    - name: Set VAULT_ADDR in environment
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "VAULT_ADDR=http://{{ VAULT_HTTP_ADDR }}:{{ VAULT_HTTP_PORT }}"
+        create: true
+
+    - name: Install vault.hcl
+      ansible.builtin.template:
+        src: vault.hcl.j2
+        dest: "{{ VAULT_CONF_PATH }}"
+        owner: "{{ VAULT_RUN_USER }}"
+        group: "{{ VAULT_RUN_GROUP }}"
+        mode: "0640"

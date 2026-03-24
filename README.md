@@ -52,6 +52,12 @@ A curated collection of Ansible playbooks for [Jailrun](https://github.com/hypha
 | [`clojure`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/clojure/rolling) | [Clojure](https://clojure.org/) dynamic, functional dialect of Lisp on the JVM. |
 | [`ocaml`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ocaml/rolling) | [OCaml](https://ocaml.org/) general-purpose functional language with a powerful type system. |
 
+### Security
+
+| Playbook | Description |
+| --- | --- |
+| [`vault`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/vault/1.20) | [Vault](https://www.vaultproject.io/) secrets management and encryption as a service. |
+
 ## Base Playbooks
 
 ### Desktop

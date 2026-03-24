@@ -16,6 +16,7 @@ nav = [
     { "Development" = "development/index.md" },
     { "P2P" = "p2p/index.md" },
     { "Web" = "web/index.md" },
+    { "Security" = "security/index.md" },
     { "Desktop" = "desktop/index.md" },
   ]},
 ]
