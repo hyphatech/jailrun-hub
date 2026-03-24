@@ -1,0 +1,128 @@
+- name: Continuwuity
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    PACKAGES: []
+    CONTINUWUITY_VERSION: "0.5.5"
+    CONTINUWUITY_REPO: "https://forgejo.ellis.link/continuwuation/continuwuity.git"
+    CONTINUWUITY_SRC_DIR: "/usr/local/src/continuwuity"
+    CONTINUWUITY_CONF_DIR: "/usr/local/etc/continuwuity"
+    CONTINUWUITY_CONF_FILE: "conduwuit.toml"
+    CONTINUWUITY_CONF_PATH: "{{ CONTINUWUITY_CONF_DIR }}/{{ CONTINUWUITY_CONF_FILE }}"
+    CONTINUWUITY_STATE_DIR: "/var/db/continuwuity"
+    CONTINUWUITY_MEDIA_DIR: "{{ CONTINUWUITY_STATE_DIR }}/media"
+    CONTINUWUITY_LOG_DIR: "/var/log/continuwuity"
+    CONTINUWUITY_SERVER_NAME: "matrix.jrun"
+    CONTINUWUITY_HTTP_ADDR: "0.0.0.0"
+    CONTINUWUITY_HTTP_PORT: 6167
+    CONTINUWUITY_FEDERATION_PORT: 8448
+    CONTINUWUITY_MAX_REQUEST_SIZE: 20971520
+    CONTINUWUITY_ALLOW_REGISTRATION: "true"
+    CONTINUWUITY_ALLOW_FEDERATION: "true"
+    CONTINUWUITY_ADMIN_USER: "admin"
+    CONTINUWUITY_ADMIN_PASSWORD: "admin"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - ca_root_nss
+          - git
+          - rust
+          - rocksdb
+          - pkgconf
+          - llvm
+          - gmake
+        state: present
+
+    - name: Install extra packages
+      ansible.builtin.package:
+        name: "{{ PACKAGES }}"
+        state: present
+      when: PACKAGES | length > 0
+
+    - name: Check if continuwuity is installed
+      ansible.builtin.command: test -x /usr/local/bin/conduwuit
+      register: continuwuity_check
+      changed_when: false
+      failed_when: false
+
+    - name: Create source directory
+      ansible.builtin.file:
+        path: "{{ CONTINUWUITY_SRC_DIR }}"
+        state: directory
+      when: continuwuity_check.rc != 0
+
+    - name: Fetch continuwuity source
+      ansible.builtin.command: >
+        git clone --branch v{{ CONTINUWUITY_VERSION }} --depth 1
+        {{ CONTINUWUITY_REPO }} {{ CONTINUWUITY_SRC_DIR }}
+      args:
+        creates: "{{ CONTINUWUITY_SRC_DIR }}/Cargo.toml"
+      when: continuwuity_check.rc != 0
+
+    - name: Find libclang path
+      ansible.builtin.shell: find /usr/local -name "libclang.so*" | head -1 | xargs dirname
+      register: libclang_path
+      changed_when: false
+
+    - name: Build continuwuity
+      ansible.builtin.command: cargo build --release
+      args:
+        chdir: "{{ CONTINUWUITY_SRC_DIR }}"
+      environment:
+        PATH: "/usr/local/bin:/usr/bin:/bin"
+        LIBCLANG_PATH: "{{ libclang_path.stdout }}"
+        ROCKSDB_INCLUDE_DIR: "/usr/local/include"
+        ROCKSDB_LIB_DIR: "/usr/local/lib"
+      when: continuwuity_check.rc != 0
+
+    - name: Install continuwuity binary
+      ansible.builtin.copy:
+        src: "{{ CONTINUWUITY_SRC_DIR }}/target/release/conduwuit"
+        dest: /usr/local/bin/conduwuit
+        mode: "0755"
+        remote_src: true
+      when: continuwuity_check.rc != 0
+
+    - name: Ensure continuwuity config directory exists
+      ansible.builtin.file:
+        path: "{{ CONTINUWUITY_CONF_DIR }}"
+        state: directory
+        mode: "0755"
+
+    - name: Ensure continuwuity directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0750"
+      loop:
+        - "{{ CONTINUWUITY_STATE_DIR }}"
+        - "{{ CONTINUWUITY_MEDIA_DIR }}"
+        - "{{ CONTINUWUITY_LOG_DIR }}"
+
+    - name: Install conduwuit.toml
+      ansible.builtin.template:
+        src: conduwuit.toml.j2
+        dest: "{{ CONTINUWUITY_CONF_PATH }}"
+        mode: "0640"
+
+    - name: Check if admin user exists
+      ansible.builtin.stat:
+        path: "{{ CONTINUWUITY_STATE_DIR }}/.admin_created"
+      register: admin_created
+
+    - name: Create admin user
+      ansible.builtin.command: >
+        conduwuit
+        --config {{ CONTINUWUITY_CONF_PATH }}
+        --execute 'users create {{ CONTINUWUITY_ADMIN_USER }} {{ CONTINUWUITY_ADMIN_PASSWORD }}'
+        --execute 'server shutdown'
+      when: not admin_created.stat.exists
+
+    - name: Mark admin user as created
+      ansible.builtin.file:
+        path: "{{ CONTINUWUITY_STATE_DIR }}/.admin_created"
+        state: touch
+      when: not admin_created.stat.exists
