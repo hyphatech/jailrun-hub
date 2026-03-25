@@ -28,7 +28,7 @@ jail "hypha-i2pd" {
 | `I2PD_HTTP_PROXY_PORT`   | HTTP proxy port                          | `4444`                |
 | `I2PD_SOCKS_PROXY_PORT`  | SOCKS proxy port                         | `4447`                |
 | `I2PD_WEBCONSOLE_PORT`   | Web console port                         | `7070`                |
-| `I2PD_LISTEN_ADDRESS`    | Bind address for all services            | `127.0.0.1`           |
+| `I2PD_LISTEN_ADDRESS`    | Bind address for all services            | `0.0.0.0`             |
 | `I2PD_DATA_DIR`          | Router data directory                    | `/var/db/i2pd`        |
 | `I2PD_LOG_DIR`           | Log directory                            | `/var/log/i2pd`       |
 | `I2PD_CONF_DIR`          | Config directory                         | `/usr/local/etc/i2pd` |
