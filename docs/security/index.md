@@ -14,6 +14,6 @@ Secrets management, encryption, and access control jails.
 
     Secrets management, encryption as a service, and privileged access management.
 
-    [:octicons-mark-github-16:`vault`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/vault/1.21)
+    [:octicons-mark-github-16: Vault](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/vault/1.21){ .md-button .md-button--primary }
 
 </div>

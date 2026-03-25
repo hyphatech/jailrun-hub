@@ -14,7 +14,7 @@ Web servers, reverse proxies, and static site generators jails.
 
     Fast and flexible static site generator written in Go.
 
-    [:octicons-mark-github-16:`hugo`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugo/0.157)
+    [:octicons-mark-github-16: Hugo](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugo/0.157){ .md-button .md-button--primary }
 
 -   __Hugoplate 0.157__
 
@@ -22,7 +22,7 @@ Web servers, reverse proxies, and static site generators jails.
 
     Feature-rich Hugo starter kit for building modern static sites quickly.
 
-    [:octicons-mark-github-16:`hugoplate`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugoplate/0.157)
+    [:octicons-mark-github-16: Hugoplate](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/hugoplate/0.157){ .md-button .md-button--primary }
 
 -   __Nginx (rolling)__
 
@@ -30,7 +30,7 @@ Web servers, reverse proxies, and static site generators jails.
 
     High-performance HTTP server and reverse proxy with a basic default configuration.
 
-    [:octicons-mark-github-16:`nginx`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/nginx/rolling)
+    [:octicons-mark-github-16: Nginx](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/nginx/rolling){ .md-button .md-button--primary }
 
 -   __HAProxy (rolling)__
 
@@ -38,6 +38,6 @@ Web servers, reverse proxies, and static site generators jails.
 
     Reliable, high-performance TCP and HTTP load balancer and proxy server.
 
-    [:octicons-mark-github-16:`haproxy`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/haproxy/rolling)
+    [:octicons-mark-github-16: HAProxy](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/haproxy/rolling){ .md-button .md-button--primary }
 
 </div>

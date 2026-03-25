@@ -14,7 +14,7 @@ Distributed and anonymous networking protocols and file sharing jails.
 
     Full-featured C++ implementation of the I2P anonymous overlay network router.
 
-    [:octicons-mark-github-16:`i2pd`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/rolling)
+    [:octicons-mark-github-16: I2PD](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/i2pd/rolling){ .md-button .md-button--primary }
 
 -   __IPFS 0.40__
 
@@ -22,7 +22,7 @@ Distributed and anonymous networking protocols and file sharing jails.
 
     Peer-to-peer hypermedia protocol for content-addressed, distributed file storage and sharing.
 
-    [:octicons-mark-github-16:`ipfs`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ipfs/0.40)
+    [:octicons-mark-github-16: IPFS](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ipfs/0.40){ .md-button .md-button--primary }
 
 -   __Continuwuity 0.5.5__
 
@@ -30,6 +30,6 @@ Distributed and anonymous networking protocols and file sharing jails.
 
     Fast, community-driven Matrix homeserver written in Rust.
 
-    [:octicons-mark-github-16:`continuwuity`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/continuwuity/0.5.5)
+    [:octicons-mark-github-16: Continuwuity](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/continuwuity/0.5.5){ .md-button .md-button--primary }
 
 </div>
