@@ -51,7 +51,4 @@ jail "hypha-continuwuity" {
 ## Notes
 
 - Change `CONTINUWUITY_ADMIN_PASSWORD` before production use.
-- The `--config` path used when starting Conduwuit must match `CONTINUWUITY_CONF_PATH`. By default this is:
-  ```sh
-  --config /usr/local/etc/continuwuity/conduwuit.toml
-  ```
+- The `--config` path used when starting Conduwuit must match `CONTINUWUITY_CONF_PATH`. By default this is `--config /usr/local/etc/continuwuity/conduwuit.toml`.

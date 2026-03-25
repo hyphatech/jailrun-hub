@@ -24,4 +24,12 @@ Distributed and anonymous networking protocols and file sharing jails.
 
     [:octicons-mark-github-16:`ipfs`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/ipfs/0.40)
 
+-   __Continuwuity 0.5.5__
+
+    ---
+
+    Fast, community-driven Matrix homeserver written in Rust.
+
+    [:octicons-mark-github-16:`continuwuity`](https://github.com/hyphatech/jailrun-hub/tree/main/playbooks/continuwuity/0.5.5)
+
 </div>
